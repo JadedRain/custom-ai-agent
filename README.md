@@ -14,17 +14,18 @@ Settings for a players preferences in playstyle
 Game data for recommended build, actual build, win or loss, and other player data will be stored on a database
 Admin account will be able to look and edit at information for any player
 
-Functions
-I will have an autonomous function that runs at varius points in the past game to check it's state and make build recommendations
-I will have a function that will update the UI with a list of potential items for the user to have built
-I will have an autonomous function that will check which players will most likely be able to be killed with current player build/champion
-I will have a user confirmed function that will recommend a build based on the type of build they are looking for (Agressive, Defensive, Greedy)
+## Functions
+I will have an autonomous function that runs at where the LLM  will make a build/item recommendation from a list of possible items choosen from win rate, stats, and enemy information
+I will have a function that will update the UI with a list of potential items that the LLM recommends for the user to have built
+I will have an autonomous function that have the LLM show which players will most likely be able to be killed based on champion information
+I will have a user confirmed function that will have the LLM recommend and export a build based on the build type (Agressive, Defensive, Greedy) choosen from offensive, defensive, and cost efficency of items while using
+win rate, stats, and enemy information as well.
 
-Additional Tasks
+## Additional Tasks
 For this project I will be looking to work with images of items and runes to help display information in the application
 I would also like to experiment with a 3rd party MCP server
         
-New things to do:
+## New things to do:
 Working with a 3rd party MCP server
 Working with live game data
 
