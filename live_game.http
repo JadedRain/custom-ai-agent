@@ -1,0 +1,22 @@
+@api_key = RGAPI-8454f957-5ad8-4ad3-add1-5ab0db1e5e0e 
+# Api key every in 24 hours
+@summonerName = JadedRain
+@tag = NA1
+
+### 1) Get summoner by name
+GET https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{{summonerName}}/{{tag}}?api_key={{api_key}}
+Accept: application/json
+X-Riot-Token: {{api_key}}
+
+### 2) Get games by summoner ID 
+@encryptedSummonerId = 9-lsfzfiHvfP02yt-pkFhZDvvkdZ0TZsGaE2vJ5Jm1zQ9fsUjhPp2LxZ93NsZr5do2t7K-yjn1PnNA
+
+GET https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{{encryptedSummonerId}}/ids?api_key={{api_key}}&start=0&count=20
+Accept: application/json
+X-Riot-Token: {{api_key}}
+
+### 3) Get info from game
+@game_id = NA1_5397624932
+GET https://americas.api.riotgames.com/lol/match/v5/matches/{{game_id}}
+Accept: application/json
+X-Riot-Token: {{api_key}}

@@ -1,12 +1,12 @@
 # custom-ai-agent
 
 ## Proposal
-For my project I'm looking to create an ai agent that can generate different build paths for a player in league of legends based on the current state of the game/what their team, the opponent, and their current build have to offer. I will use Riot Games dev API to retirieve live game data
+For my project I'm looking to create an ai agent that can generate different build paths for a player in league of legends based on what happened in the game/what their team, the opponent, and their current build had to offer. I will use Riot Games dev API to retirieve past game data
 
 ## Requirements
 General
-I will be able to enter a players name and see their live game data
-I will be able to get information about what that player is using
+I will be able to enter a players name and see their past game data
+I will be able to get information about what that player was using
 I will be able to recommend a build path based on information about the game
 I will have the option to choose they types of builds recommended to me e.g. Agressive, Defensive, Greedy, etc
 I will be able to recommend runes based on user entered informantion in the draft portion of the game
@@ -15,8 +15,8 @@ Game data for recommended build, actual build, win or loss, and other player dat
 Admin account will be able to look and edit at information for any player
 
 Functions
-I will have an autonomous function that runs at varius points in the game to check it's state and make build recommendations
-I will have a function that will update the UI with a list of potential items for the user to build
+I will have an autonomous function that runs at varius points in the past game to check it's state and make build recommendations
+I will have a function that will update the UI with a list of potential items for the user to have built
 I will have an autonomous function that will check which players will most likely be able to be killed with current player build/champion
 I will have a user confirmed function that will recommend a build based on the type of build they are looking for (Agressive, Defensive, Greedy)
 
@@ -34,12 +34,11 @@ Working with live game data
 3. Match history page
 4. Player preference page
 5. Rune recommendation page
-6. Live game build recommendation
+6. Game build recommendation
 7. Admin page
 8. Player analytics page
 9. Champion info page
 10. Professional players page
-## Project Schedule
 
 # Schedule
 ### Oct 29
@@ -92,7 +91,7 @@ Rubric items:
 - Mobile friendly design
 
 Features:
-- Can see a player's current live game data including stats, items, KDA, champions, etc
+- Can see a player's past game data including stats, items, KDA, champions, etc
 - Can see a player's match history and whether the match was a win or loss
 - Can lookup a player and get information about them including winrate, most played champions, rank, etc
 
@@ -136,7 +135,7 @@ Rubric items:
 - Actions persisted to DB
 
 Features:
-- Recommended build path using AI based on user stats, champion and item winrate, enemy team current build
+- Recommended build path using AI based on user stats, champion and item winrate, enemy team build
 - Can choose between greedy, defensive, and offensive build paths. Adjusts items based on their cost, defenses, and damage
 
 #### Delivered
