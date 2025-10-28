@@ -1,7 +1,7 @@
 # custom-ai-agent
 
 ## Proposal
-For my project I'm looking to create an ai agent that can generate different build paths for a player in league of legends based on what happened in the game/what their team, the opponent, and their current build had to offer. I will use Riot Games dev API to retirieve past game data
+For my project I'm looking to create an ai agent that can generate different build paths for a player in league of legends based on what happened in the game/what their team, the opponent, and their current build had to offer. I will use Riot Games dev API to retirieve past game data. I will also have a draft planner where a user can enter the champions currently in the game and based on what characters are currently in play give a general build that can be used against them.
 
 ## Requirements
 General
@@ -10,6 +10,7 @@ I will be able to get information about what that player was using
 I will be able to recommend a build path based on information about the game
 I will have the option to choose they types of builds recommended to me e.g. Agressive, Defensive, Greedy, etc
 I will be able to recommend runes based on user entered informantion in the draft portion of the game
+I will be able to plan a draft and get a recommendation of a build that would work well into the enemy
 Settings for a players preferences in playstyle
 Game data for recommended build, actual build, win or loss, and other player data will be stored on a database
 Admin account will be able to look and edit at information for any player
