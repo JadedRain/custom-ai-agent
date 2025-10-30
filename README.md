@@ -57,9 +57,14 @@ Features:
 #### Delivered
 
 Rubric Items:
+- Toasts/ global alerts
+- Global client-side state management
+- Error handling
 
 
 Features:
+- Errors displayed to user
+- Tanstack in place
 
 ### Nov 1
 
