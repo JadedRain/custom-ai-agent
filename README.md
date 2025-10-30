@@ -1,7 +1,7 @@
 # custom-ai-agent
 
 ## Proposal
-For my project I'm looking to create an ai agent that can generate different build paths for a player in league of legends based on what happened in the game/what their team, the opponent, and their current build had to offer. I will use Riot Games dev API to retirieve past game data
+For my project I'm looking to create an ai agent that can generate different build paths for a player in league of legends based on what happened in the game/what their team, the opponent, and their current build had to offer. I will use Riot Games dev API to retirieve past game data. I will also have a draft planner where a user can enter the champions currently in the game and based on what characters are currently in play give a general build that can be used against them.
 
 ## Requirements
 General
@@ -10,21 +10,23 @@ I will be able to get information about what that player was using
 I will be able to recommend a build path based on information about the game
 I will have the option to choose they types of builds recommended to me e.g. Agressive, Defensive, Greedy, etc
 I will be able to recommend runes based on user entered informantion in the draft portion of the game
+I will be able to plan a draft and get a recommendation of a build that would work well into the enemy
 Settings for a players preferences in playstyle
 Game data for recommended build, actual build, win or loss, and other player data will be stored on a database
 Admin account will be able to look and edit at information for any player
 
-Functions
-I will have an autonomous function that runs at varius points in the past game to check it's state and make build recommendations
-I will have a function that will update the UI with a list of potential items for the user to have built
-I will have an autonomous function that will check which players will most likely be able to be killed with current player build/champion
-I will have a user confirmed function that will recommend a build based on the type of build they are looking for (Agressive, Defensive, Greedy)
+## Functions
+I will have an autonomous function that runs at where the LLM  will make a build/item recommendation from a list of possible items choosen from win rate, stats, and enemy information
+I will have a function that will update the UI with a list of potential items that the LLM recommends for the user to have built
+I will have an autonomous function that have the LLM show which players will most likely be able to be killed based on champion information
+I will have a user confirmed function that will have the LLM recommend and export a build based on the build type (Agressive, Defensive, Greedy) choosen from offensive, defensive, and cost efficency of items while using
+win rate, stats, and enemy information as well.
 
-Additional Tasks
+## Additional Tasks
 For this project I will be looking to work with images of items and runes to help display information in the application
 I would also like to experiment with a 3rd party MCP server
         
-New things to do:
+## New things to do:
 Working with a 3rd party MCP server
 Working with live game data
 
