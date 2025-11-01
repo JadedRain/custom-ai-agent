@@ -3,12 +3,13 @@ import { showErrorToast } from './ErrorToast';
 
 export const queryClient = new QueryClient();
 
-queryClient.getQueryCache().subscribe((event: any) => {
-  if (event?.type === 'error' && event?.error) {
-    if (event.error instanceof Error) {
-      showErrorToast(event.error);
+queryClient.getQueryCache().subscribe((event: unknown) => {
+  if (event && typeof event === 'object' && 'type' in event && event.type === 'error' && 'error' in event) {
+    const error = event.error;
+    if (error instanceof Error) {
+      showErrorToast(error);
     } else {
-      showErrorToast(new Error(String(event.error)));
+      showErrorToast(new Error(String(error)));
     }
   }
 });
