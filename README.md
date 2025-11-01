@@ -85,9 +85,17 @@ Features:
 #### Delivered
 
 Rubric Items:
+- CI/CD pipeline
+- Tests run in pipeline (aborts on fail)
+- Pipeline linting (aborts on fail)
+- User authentication
+- On kubernetes
 
 
 Features:
+- User can sign in
+- Started drawing page designs
+- Project runs on kubernetes (didn't know if this counted)
 
 ### Nov 5
 
