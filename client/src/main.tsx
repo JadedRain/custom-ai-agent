@@ -10,7 +10,7 @@ import { AuthProvider } from 'react-oidc-context'
 
 const oidcConfig = {
   authority: "https://auth-dev.snowse.io/realms/DevRealm/",
-  client_id: "logan-chat",
+  client_id: "logan-final",
   redirect_uri: "https://jaded-agent.duckdns.org/",
 }
 createRoot(document.getElementById('root')!).render(
