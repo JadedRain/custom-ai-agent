@@ -11,6 +11,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.90.5
         version: 5.90.5(react@19.2.0)
+      oidc-client-ts:
+        specifier: ^3.3.0
+        version: 3.3.0
       react:
         specifier: ^19.1.1
         version: 19.2.0
@@ -20,6 +23,9 @@ importers:
       react-hot-toast:
         specifier: ^2.6.0
         version: 2.6.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react-oidc-context:
+        specifier: ^3.3.0
+        version: 3.3.0(oidc-client-ts@3.3.0)(react@19.2.0)
     devDependencies:
       '@eslint/js':
         specifier: ^9.36.0
@@ -1021,6 +1027,10 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
+
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
@@ -1144,6 +1154,10 @@ packages:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
 
+  oidc-client-ts@3.3.0:
+    resolution: {integrity: sha512-t13S540ZwFOEZKLYHJwSfITugupW4uYLwuQSSXyKH/wHwZ+7FvgHE7gnNJh1YQIZ1Yd1hKSRjqeXGSUtS0r9JA==}
+    engines: {node: '>=18'}
+
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
@@ -1208,6 +1222,13 @@ packages:
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
+
+  react-oidc-context@3.3.0:
+    resolution: {integrity: sha512-302T/ma4AOVAxrHdYctDSKXjCq9KNHT564XEO2yOPxRfxEP58xa4nz+GQinNl8x7CnEXECSM5JEjQJk3Cr5BvA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      oidc-client-ts: ^3.1.0
+      react: '>=16.14.0'
 
   react-refresh@0.18.0:
     resolution: {integrity: sha512-QgT5//D3jfjJb6Gsjxv0Slpj23ip+HtOpnNgnb2S5zU3CB26G/IDPGoy4RJB42wzFE46DRsstbW6tKHoKbhAxw==}
@@ -2257,6 +2278,8 @@ snapshots:
 
   json5@2.2.3: {}
 
+  jwt-decode@4.0.0: {}
+
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
@@ -2354,6 +2377,10 @@ snapshots:
 
   normalize-range@0.1.2: {}
 
+  oidc-client-ts@3.3.0:
+    dependencies:
+      jwt-decode: 4.0.0
+
   optionator@0.9.4:
     dependencies:
       deep-is: 0.1.4
@@ -2410,6 +2437,11 @@ snapshots:
       goober: 2.1.18(csstype@3.1.3)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
+
+  react-oidc-context@3.3.0(oidc-client-ts@3.3.0)(react@19.2.0):
+    dependencies:
+      oidc-client-ts: 3.3.0
+      react: 19.2.0
 
   react-refresh@0.18.0: {}
 
