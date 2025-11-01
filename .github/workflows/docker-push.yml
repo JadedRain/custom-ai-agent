@@ -29,3 +29,11 @@ jobs:
           file: ./client/Dockerfile
           push: true
           tags: jadedrain/ai-agent-frontend:latest
+
+      - name: Apply Kubernetes configuration
+        run: |
+          kubectl apply -f kube/namespace.yaml
+          kubectl apply -f kube/deployment.yaml
+          kubectl apply -f kube/service.yaml
+          kubectl apply -f kube/ingress.yaml
+          kubectl rollout restart deployment/ai-agent-frontend -n logan-final

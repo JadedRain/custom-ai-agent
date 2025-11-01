@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-agent-frontend
+  namespace: logan-final
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-agent-frontend
+  template:
+    metadata:
+      labels:
+        app: ai-agent-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: jadedrain/ai-agent-frontend:latest
+        ports:
+        - containerPort: 5173
+        env:
+        - name: NODE_ENV
+          value: "production"
