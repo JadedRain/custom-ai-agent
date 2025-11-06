@@ -113,9 +113,13 @@ Features:
 #### Delivered
 
 Rubric Items:
+- Network calls read data
 
 
 Features:
+- Can see a player's past game data
+- Can see a player's match history
+- Can lookup a player and get information about them
 
 ### Nov 8
 
