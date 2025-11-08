@@ -136,9 +136,13 @@ Features:
 #### Delivered
 
 Rubric Items:
+- Network calls write data
+- Authorized age
+- Data persisted on server
 
 
 Features:
+- Settings page to choose playstyle
 
 ### Nov 12
 
