@@ -4,8 +4,11 @@ import { useState } from 'react';
 import { TestQueryErrorButton } from './components/TestQueryErrorButton';
 import { ErrorThrower } from './components/ErrorThrower';
 import { useAuth } from 'react-oidc-context';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { PlayerPage } from './pages/PlayerPage';
+import { SettingsPage } from './pages/SettingsPage';
 
-function App() {
+function HomePage() {
   const auth = useAuth();
   const [showError, setShowError] = useState(false);
   const throwError = () => {
@@ -46,6 +49,25 @@ function App() {
       <TestQueryErrorButton />
       {showError && <ErrorThrower />}
     </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <nav className="bg-gray-800 p-4 mb-4">
+        <div className="flex gap-4">
+          <Link to="/" className="text-white hover:text-blue-400">Home</Link>
+          <Link to="/player" className="text-white hover:text-blue-400">Player Lookup</Link>
+          <Link to="/settings" className="text-white hover:text-blue-400">Settings</Link>
+        </div>
+      </nav>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/player" element={<PlayerPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

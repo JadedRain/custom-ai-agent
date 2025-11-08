@@ -1,5 +1,21 @@
 version: '3.8'
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ai_agent_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   client:
     build:
       context: ./client
@@ -8,6 +24,35 @@ services:
       - "5173:5173"
     volumes:
       - ./client:/app
+      - /app/node_modules
     environment:
       - NODE_ENV=development
+      - VITE_API_URL=http://localhost:5000
     command: ["pnpm", "run", "dev", "--", "--host"]
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./api:/app
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=True
+      - RIOT_API_KEY=${RIOT_API_KEY}
+      - KEYCLOAK_SERVER_URL=${KEYCLOAK_SERVER_URL:-https://auth-dev.snowse.io}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-DevRealm}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-logan-chat}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET:-}
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/ai_agent_db
+    command: ["python", "app.py"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

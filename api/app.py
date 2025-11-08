@@ -1,26 +1,23 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, g
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from riot_api import get_summoner_by_riot_id, get_match_history, get_match_details
+from auth_middleware import init_auth_middleware
+from database import init_db, db
+from models import User, UserPreference, BuildType
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    return jsonify({'status': 'healthy', 'message': 'API is running'})
-
-@app.route('/api', methods=['GET'])
-def index():
-    return jsonify({'message': 'Welcome to the AI Agent API'})
+init_db(app)
+init_auth_middleware(app)
 
 @app.route('/api/summoner/<game_name>/<tag_line>', methods=['GET'])
 def get_summoner(game_name, tag_line):
     summoner_data = get_summoner_by_riot_id(game_name, tag_line)
-    
     if summoner_data:
         return jsonify(summoner_data)
     else:
@@ -40,7 +37,6 @@ def match_history(puuid):
 
 @app.route('/api/match/<match_id>', methods=['GET'])
 def match_details(match_id):
-    """Get detailed information about a specific match"""
     match_data = get_match_details(match_id)
     
     if match_data:
@@ -52,7 +48,6 @@ def match_details(match_id):
 def player_match_history(game_name, tag_line):
     count = request.args.get('count', 10, type=int)
     
-    # Get summoner info
     summoner_data = get_summoner_by_riot_id(game_name, tag_line)
     
     if not summoner_data:
@@ -60,13 +55,11 @@ def player_match_history(game_name, tag_line):
     
     puuid = summoner_data.get('puuid')
     
-    # Get match IDs
     match_ids = get_match_history(puuid, 0, count)
     
     if not match_ids:
         return jsonify({'error': 'No matches found'}), 404
     
-    # Get detailed match data
     matches = []
     for match_id in match_ids:
         match_data = get_match_details(match_id)
@@ -76,6 +69,93 @@ def player_match_history(game_name, tag_line):
     return jsonify({
         'summoner': summoner_data,
         'matches': matches
+    })
+
+@app.route('/api/user/preferences', methods=['GET'])
+def get_user_preferences():
+    if not hasattr(g, 'user') or not g.user:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    keycloak_sub = g.user.get('sub')
+    
+    user = User.query.filter_by(keycloak_sub=keycloak_sub).first()
+    
+    if not user:
+        user = User(
+            keycloak_sub=keycloak_sub,
+            email=g.user.get('email'),
+            username=g.user.get('preferred_username')
+        )
+        db.session.add(user)
+        db.session.commit()
+    
+    preference = UserPreference.query.filter_by(user_id=user.id).first()
+    
+    if not preference:
+        preference = UserPreference(
+            user_id=user.id,
+            build_type=BuildType.GREEDY
+        )
+        db.session.add(preference)
+        db.session.commit()
+    
+    return jsonify({
+        'user': user.to_dict(),
+        'preference': preference.to_dict()
+    })
+
+@app.route('/api/user/preferences', methods=['PUT'])
+def update_user_preferences():
+    if not hasattr(g, 'user') or not g.user:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    data = request.get_json()
+    
+    if not data or 'build_type' not in data:
+        return jsonify({'error': 'build_type is required'}), 400
+    
+    build_type_str = data['build_type'].lower()
+    
+    # Validate build type
+    try:
+        build_type = BuildType(build_type_str)
+    except ValueError:
+        return jsonify({
+            'error': f'Invalid build_type. Must be one of: greedy, defensive, offensive'
+        }), 400
+    
+    keycloak_sub = g.user.get('sub')
+    
+    # Get or create user
+    user = User.query.filter_by(keycloak_sub=keycloak_sub).first()
+    
+    if not user:
+        user = User(
+            keycloak_sub=keycloak_sub,
+            email=g.user.get('email'),
+            username=g.user.get('preferred_username')
+        )
+        db.session.add(user)
+        db.session.commit()
+    
+    # Get or create preference
+    preference = UserPreference.query.filter_by(user_id=user.id).first()
+    
+    if not preference:
+        preference = UserPreference(
+            user_id=user.id,
+            build_type=build_type
+        )
+        db.session.add(preference)
+    else:
+        preference.build_type = build_type
+    
+    db.session.commit()
+    
+    return jsonify({
+        'user': user.to_dict(),
+        'preference': preference.to_dict(),
+        'message': 'Preference updated successfully'
     })
 
 if __name__ == '__main__':

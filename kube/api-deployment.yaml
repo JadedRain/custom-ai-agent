@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-agent-api
+  namespace: logan-final
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-agent-api
+  template:
+    metadata:
+      labels:
+        app: ai-agent-api
+    spec:
+      containers:
+      - name: api
+        image: jadedrain/ai-agent-api:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: FLASK_ENV
+          value: "production"
+        - name: RIOT_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: riot-api-secret
+              key: api-key
