@@ -7,13 +7,12 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './components/queryClient'
 import { AuthProvider } from 'react-oidc-context'
-import { redirect } from 'react-router-dom'
 
 const oidcConfig = {
   authority: "https://auth-dev.snowse.io/realms/DevRealm/",
   client_id: "logan-final",
-  redirect_uri: "http://localhost:5173"
-  // redirect_uri: "https://jaded-agent.duckdns.org/",
+  // redirect_uri: "http://localhost:5173",
+  redirect_uri: "https://jaded-agent.duckdns.org/",
 }
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
