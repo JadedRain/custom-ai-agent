@@ -58,17 +58,7 @@ jobs:
           push: true
           tags: jadedrain/ai-agent-backend:latest
 
-      - name: Setup kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-          # Ensure the server points to the correct K3s endpoint
-          sed -i 's|server:.*|server: https://127.0.0.1:6443|g' $HOME/.kube/config
-
       - name: Apply Kubernetes configuration
-        env:
-          KUBECONFIG: $HOME/.kube/config
         run: |
           kubectl apply -f kube/
           kubectl rollout restart deployment/ai-agent-frontend -n logan-final
