@@ -61,20 +61,13 @@ jobs:
       - name: Setup kubeconfig
         run: |
           mkdir -p $HOME/.kube
-          if [ -f /etc/rancher/k3s/k3s.yaml ]; then
-            cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
-          elif [ -f $HOME/.kube/config ]; then
-            echo "Using existing kubeconfig"
-          else
-            echo "Error: No kubeconfig found"
-            exit 1
-          fi
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
-          export KUBECONFIG=$HOME/.kube/config
 
       - name: Apply Kubernetes configuration
+        env:
+          KUBECONFIG: $HOME/.kube/config
         run: |
-          export KUBECONFIG=$HOME/.kube/config
           kubectl apply -f kube/
           kubectl rollout restart deployment/ai-agent-frontend -n logan-final
           kubectl rollout restart deployment/ai-agent-api -n logan-final
