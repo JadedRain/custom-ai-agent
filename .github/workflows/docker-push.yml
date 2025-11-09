@@ -60,6 +60,6 @@ jobs:
 
       - name: Apply Kubernetes configuration
         run: |
-          sudo kubectl apply -f kube/
-          sudo kubectl rollout restart deployment/ai-agent-frontend -n logan-final
-          sudo kubectl rollout restart deployment/ai-agent-api -n logan-final
+          kubectl apply -f kube/
+          kubectl rollout restart deployment/ai-agent-frontend -n logan-final
+          kubectl rollout restart deployment/ai-agent-api -n logan-final
