@@ -58,8 +58,23 @@ jobs:
           push: true
           tags: jadedrain/ai-agent-backend:latest
 
+      - name: Setup kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          if [ -f /etc/rancher/k3s/k3s.yaml ]; then
+            cp /etc/rancher/k3s/k3s.yaml $HOME/.kube/config
+          elif [ -f $HOME/.kube/config ]; then
+            echo "Using existing kubeconfig"
+          else
+            echo "Error: No kubeconfig found"
+            exit 1
+          fi
+          chmod 600 $HOME/.kube/config
+          export KUBECONFIG=$HOME/.kube/config
+
       - name: Apply Kubernetes configuration
         run: |
+          export KUBECONFIG=$HOME/.kube/config
           kubectl apply -f kube/
           kubectl rollout restart deployment/ai-agent-frontend -n logan-final
           kubectl rollout restart deployment/ai-agent-api -n logan-final
