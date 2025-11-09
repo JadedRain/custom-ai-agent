@@ -6,9 +6,37 @@ export interface Summoner {
   tagLine: string;
 }
 
+export interface MatchParticipant {
+  puuid: string;
+  championName?: string;
+  champion?: string;
+  win: boolean;
+  kills?: number;
+  deaths?: number;
+  assists?: number;
+  [key: string]: unknown;
+}
+
+export interface MatchInfo {
+  participants: MatchParticipant[];
+  gameMode?: string;
+  queueId?: number;
+  [key: string]: unknown;
+}
+
+export interface MatchMetadata {
+  matchId: string;
+  [key: string]: unknown;
+}
+
+export interface Match {
+  metadata: MatchMetadata;
+  info: MatchInfo;
+}
+
 export interface MatchHistoryResponse {
   summoner: Summoner;
-  matches: any[];
+  matches: Match[];
 }
 
 export type BuildType = 'greedy' | 'defensive' | 'offensive';

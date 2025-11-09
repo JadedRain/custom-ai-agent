@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useAuth } from 'react-oidc-context';
 import { useSummoner, usePlayerMatchHistory } from '../api/hooks';
+import type { Match } from '../api/client';
 
 // Helper function to format champion names for Data Dragon URLs
 const formatChampionName = (championName: string): string => {
-  // Special cases for champions with non-standard naming in Data Dragon
   const specialCases: Record<string, string> = {
     'FiddleSticks': 'Fiddlesticks',
-    'MonkeyKing': 'MonkeyKing', // Wukong
+    'MonkeyKing': 'MonkeyKing',
     'Nunu&Willump': 'Nunu',
     'RenataGlasc': 'Renata',
     'KSante': 'KSante',
@@ -37,7 +37,6 @@ export function PlayerPage() {
     setSearchTag(tagLine);
   };
 
-  // Show message if user is not authenticated
   if (!auth.isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-900 text-white p-8">
@@ -115,10 +114,10 @@ export function PlayerPage() {
                 <li className="text-gray-400">No recent matches found.</li>
               )}
 
-              {matchHistoryData.matches.map((match: any) => {
+              {matchHistoryData.matches.map((match: Match) => {
                 // match is the full Riot match object; find the participant by puuid
-                const participant = (match?.info?.participants || []).find(
-                  (p: any) => p.puuid === summoner.puuid
+                const participant = match.info.participants.find(
+                  (p) => p.puuid === summoner.puuid
                 );
 
                 const champion = participant?.championName || participant?.champion || 'Unknown';
@@ -126,7 +125,6 @@ export function PlayerPage() {
                 const gameMode = match?.info?.gameMode || 'Unknown';
                 const queueId = match?.info?.queueId;
                 
-                // Champion image URL from Data Dragon CDN (latest patch)
                 const formattedChampionName = formatChampionName(champion);
                 const championImageUrl = champion !== 'Unknown' 
                   ? `https://ddragon.leagueoflegends.com/cdn/14.23.1/img/champion/${formattedChampionName}.png`

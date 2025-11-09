@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+  namespace: logan-final
+data:
+  DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/ai_agent_db"
+  KEYCLOAK_SERVER_URL: "https://auth-dev.snowse.io"
+  KEYCLOAK_REALM: "DevRealm"
+  KEYCLOAK_CLIENT_ID: "logan-chat"
+  FLASK_ENV: "production"

@@ -20,9 +20,34 @@ spec:
         - containerPort: 5000
         env:
         - name: FLASK_ENV
-          value: "production"
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: FLASK_ENV
         - name: RIOT_API_KEY
           valueFrom:
             secretKeyRef:
               name: riot-api-secret
               key: api-key
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: DATABASE_URL
+        - name: KEYCLOAK_SERVER_URL
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: KEYCLOAK_SERVER_URL
+        - name: KEYCLOAK_REALM
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: KEYCLOAK_REALM
+        - name: KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: KEYCLOAK_CLIENT_ID
+        - name: KEYCLOAK_CLIENT_SECRET
+          value: ""
