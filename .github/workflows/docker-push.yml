@@ -50,9 +50,16 @@ jobs:
           push: true
           tags: jadedrain/ai-agent-frontend:latest
 
+      - name: Build and push api image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api
+          file: ./api/Dockerfile
+          push: true
+          tags: jadedrain/ai-agent-backend:latest
+
       - name: Apply Kubernetes configuration
         run: |
-          kubectl apply -f kube/deployment.yaml
-          kubectl apply -f kube/service.yaml
-          kubectl apply -f kube/ingress.yaml
-          kubectl rollout restart deployment/ai-agent-frontend -n logan-final
+          sudo kubectl apply -f kube/
+          sudo kubectl rollout restart deployment/ai-agent-frontend -n logan-final
+          sudo kubectl rollout restart deployment/ai-agent-api -n logan-final
