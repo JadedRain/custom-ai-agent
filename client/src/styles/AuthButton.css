@@ -1,0 +1,6 @@
+.authBtnBg {
+  background-color: hsl(150, 42%, 62%);
+}
+.authBtnBg:hover {
+  background-color: hsl(152, 41%, 52%);
+}

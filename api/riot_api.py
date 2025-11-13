@@ -47,3 +47,12 @@ def get_match_details(match_id):
         return response.json()
     else:
         return None
+
+def get_match_timeline(match_id):
+    url = f'{AMERICAS_BASE_URL}/lol/match/v5/matches/{match_id}/timeline'
+    params = {'api_key': RIOT_API_KEY}
+    response = requests.get(url, headers=get_riot_headers(), params=params)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None

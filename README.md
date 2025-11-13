@@ -164,9 +164,12 @@ Features:
 #### Delivered
 
 Rubric Items:
+- Actions persisted to DB
 
 
 Features:
+- Can see game information and what items players in a match built
+- Timeline for what items were built for a selected player and at what point in the match they were built
 
 ### Nov 15
 

@@ -9,14 +9,13 @@ export function SettingsPage() {
   const updatePreferences = useUpdateUserPreferences();
   const [selectedBuildType, setSelectedBuildType] = useState<BuildType | null>(null);
 
-  // Show message if user is not authenticated
   if (!auth.isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white p-8">
+      <div className="min-h-screen bg-primary-700 text-white p-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-8">Settings</h1>
-          <div className="bg-yellow-900/50 border border-yellow-700 rounded p-6">
-            <p className="text-yellow-200 text-lg">
+          <div className="bg-primary-600/50 border border-primary-500 rounded p-6">
+            <p className="text-primary-50 text-lg">
               Please sign in to view and manage your settings.
             </p>
           </div>
@@ -25,7 +24,6 @@ export function SettingsPage() {
     );
   }
 
-  // Update selected build type when data loads
   if (data && selectedBuildType === null) {
     setSelectedBuildType(data.preference.build_type);
   }
@@ -59,7 +57,7 @@ export function SettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen page-bg p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-8">Settings</h1>
 
@@ -70,8 +68,8 @@ export function SettingsPage() {
         )}
 
         {error && (
-          <div className="bg-red-900/50 border border-red-700 rounded p-4 mb-6">
-            <p className="text-red-200">
+          <div className="error-bg border rounded p-4 mb-6">
+            <p className="text-primary-50">
               Error: {error instanceof Error ? error.message : 'Failed to load settings'}
             </p>
           </div>
@@ -80,9 +78,9 @@ export function SettingsPage() {
         {data && (
           <div className="space-y-6">
             {/* User Info Section */}
-            <div className="bg-gray-800 rounded-lg p-6">
+            <div className="card-bg rounded-lg p-6">
               <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
-              <div className="space-y-2 text-gray-300">
+              <div className="space-y-2 text-neutral-100">
                 <p>
                   <span className="font-medium text-white">Username:</span>{' '}
                   {data.user.username || 'N/A'}
@@ -91,16 +89,16 @@ export function SettingsPage() {
                   <span className="font-medium text-white">Email:</span>{' '}
                   {data.user.email || 'N/A'}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-neutral-200">
                   Member since: {new Date(data.user.created_at).toLocaleDateString()}
                 </p>
               </div>
             </div>
 
             {/* Build Preference Section */}
-            <div className="bg-gray-800 rounded-lg p-6">
+            <div className="card-bg rounded-lg p-6">
               <h2 className="text-2xl font-semibold mb-4">Build Preferences</h2>
-              <p className="text-gray-300 mb-6">
+              <p className="text-neutral-100 mb-6">
                 Choose your preferred build strategy for AI-generated recommendations.
               </p>
 
@@ -110,8 +108,8 @@ export function SettingsPage() {
                     key={buildType.value}
                     className={`flex items-start p-4 rounded-lg border-2 cursor-pointer transition-all ${
                       selectedBuildType === buildType.value
-                        ? 'border-blue-500 bg-blue-900/20'
-                        : 'border-gray-700 bg-gray-900/40 hover:border-gray-600'
+                        ? 'border-primary-300 bg-primary-600/20'
+                        : 'border-neutral-600 bg-neutral-800/40 hover:border-neutral-500'
                     }`}
                   >
                     <input
@@ -126,7 +124,7 @@ export function SettingsPage() {
                       <div className="font-semibold text-lg text-white">
                         {buildType.label}
                       </div>
-                      <div className="text-gray-400 text-sm">
+                      <div className="text-neutral-200 text-sm">
                         {buildType.description}
                       </div>
                     </div>
@@ -144,21 +142,21 @@ export function SettingsPage() {
                   className={`px-6 py-2 rounded font-semibold transition-colors ${
                     updatePreferences.isPending ||
                     selectedBuildType === data.preference.build_type
-                      ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      ? 'bg-neutral-600 text-neutral-300 cursor-not-allowed'
+                      : 'bg-primary-300 hover:bg-primary-400 text-white'
                   }`}
                 >
                   {updatePreferences.isPending ? 'Saving...' : 'Save Changes'}
                 </button>
 
                 {updatePreferences.isSuccess && (
-                  <span className="text-green-400 text-sm">
+                  <span className="text-primary-100 text-sm">
                     ✓ Preferences saved successfully
                   </span>
                 )}
 
                 {updatePreferences.isError && (
-                  <span className="text-red-400 text-sm">
+                  <span className="text-primary-800 text-sm">
                     Failed to save preferences
                   </span>
                 )}

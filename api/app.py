@@ -1,8 +1,7 @@
 from flask import Flask, jsonify, request, g
 from flask_cors import CORS
 from dotenv import load_dotenv
-import os
-from riot_api import get_summoner_by_riot_id, get_match_history, get_match_details
+from riot_api import get_summoner_by_riot_id, get_match_history, get_match_details, get_match_timeline
 from auth_middleware import init_auth_middleware
 from database import init_db, db
 from models import User, UserPreference, BuildType
@@ -71,6 +70,14 @@ def player_match_history(game_name, tag_line):
         'matches': matches
     })
 
+@app.route('/api/match-timeline/<match_id>', methods=['GET'])
+def match_timeline(match_id):
+    timeline = get_match_timeline(match_id)
+    if timeline:
+        return jsonify(timeline)
+    else:
+        return jsonify({'error': 'Timeline not found'}), 404
+
 @app.route('/api/user/preferences', methods=['GET'])
 def get_user_preferences():
     if not hasattr(g, 'user') or not g.user:
@@ -103,7 +110,7 @@ def get_user_preferences():
         'user': user.to_dict(),
         'preference': preference.to_dict()
     })
-
+    
 @app.route('/api/user/preferences', methods=['PUT'])
 def update_user_preferences():
     if not hasattr(g, 'user') or not g.user:
