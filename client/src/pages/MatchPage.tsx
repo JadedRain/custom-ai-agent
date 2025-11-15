@@ -1,43 +1,43 @@
 
 
+
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useMatchDetails } from '../api/hooks';
 import { useMatchTimeline } from '../api/useMatchTimeline';
 import { ItemBuildTimeline } from '../components/ItemBuildTimeline';
+import { useGameData } from '../context/gameDataHelpers';
 
 const VERSION = '15.22.1';
 const ITEM_URL = `https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/item/`;
 
 const MatchPage: React.FC = () => {
-    const [itemData, setItemData] = React.useState<Record<string, any> | null>(null);
-    const [selectedPlayer, setSelectedPlayer] = React.useState<{ puuid: string, name: string } | null>(null);
+
+    const [selectedPlayer, setSelectedPlayer] = React.useState<
+        { puuid: string; name: string } | null
+    >(null);
     const { matchId = '' } = useParams();
     const { data: match, isLoading, error } = useMatchDetails(matchId);
     const { data: timeline, isLoading: timelineLoading, error: timelineError } = useMatchTimeline(matchId);
+    const { itemData, itemLoading, itemError } = useGameData();
 
-    React.useEffect(() => {
-        fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/en_US/item.json`)
-            .then(res => res.json())
-            .then(data => setItemData(data.data))
-            .catch(() => setItemData(null));
-    }, []);
-
-    if (isLoading) return <div className="p-8 text-white">Loading match details...</div>;
-    if (error) return <div className="p-8 text-red-400">Error loading match details.</div>;
+    if (isLoading || itemLoading) return <div className="p-8 text-white">Loading match details...</div>;
+    if (error || itemError) return <div className="p-8 text-red-400">Error loading match details.</div>;
     if (!match) return <div className="p-8 text-white">No match data found.</div>;
 
     const ROLE_ORDER = ['TOP', 'JUNGLE', 'MIDDLE', 'BOTTOM', 'UTILITY'];
-    const teams: Record<string, any[]> = match.info.participants.reduce(
-        (acc: Record<string, any[]>, p: any) => {
-            if (p.teamId === 100) acc['100'].push(p);
-            else if (p.teamId === 200) acc['200'].push(p);
+    const teams: Record<string, unknown[]> = match.info.participants.reduce(
+        (acc: Record<string, unknown[]>, p: unknown) => {
+            const participant = p as Record<string, unknown>;
+            if (participant.teamId === 100) acc['100'].push(participant);
+            else if (participant.teamId === 200) acc['200'].push(participant);
             return acc;
         },
         { '100': [], '200': [] }
     );
-    const sortByRole = (a: any, b: any) =>
-        ROLE_ORDER.indexOf(a.teamPosition) - ROLE_ORDER.indexOf(b.teamPosition);
+    const sortByRole = (a: unknown, b: unknown) =>
+        ROLE_ORDER.indexOf((a as Record<string, unknown>).teamPosition as string) -
+        ROLE_ORDER.indexOf((b as Record<string, unknown>).teamPosition as string);
     teams['100'].sort(sortByRole);
     teams['200'].sort(sortByRole);
 
@@ -51,31 +51,38 @@ const MatchPage: React.FC = () => {
         return specialCases[name] || name;
     };
 
-    const renderPlayer = (p: any, itemData: Record<string, any> | null) => {
-        const champName = formatChampionName(p.championName);
-        const riotName = p.riotIdGameName || p.summonerName || 'Unknown';
-        const riotTag = p.riotIdTagline || '';
+    const renderPlayer = (
+        p: Record<string, unknown>,
+        itemData: Record<string, unknown> | null
+    ) => {
+        const champName = formatChampionName(String(p.championName));
+        const riotName = String(p.riotIdGameName || p.summonerName || 'Unknown');
+        const riotTag = String(p.riotIdTagline || '');
         const mainItems = Array.from({ length: 6 }).map((_, i) => {
-            const itemId = p[`item${i}`];
+            const raw = p[`item${i}`] as unknown;
+            const itemId = Number(raw as number) || 0;
             if (!itemId || itemId === 0) return null;
             let name = '';
             let img = ITEM_URL + 'empty.png';
             let loaded = false;
-            if (itemData && itemData[itemId]) {
-                name = itemData[itemId].name;
+            if (itemData && itemData[String(itemId)]) {
+                const itemObj = itemData[String(itemId)] as Record<string, unknown>;
+                name = String(itemObj.name || '');
                 img = `${ITEM_URL}${itemId}.png`;
                 loaded = true;
             }
             return { id: itemId, name, img, loaded };
         });
-        const trinketId = p['item6'];
+        const trinketRaw = p['item6'] as unknown;
+        const trinketId = Number(trinketRaw as number) || 0;
         let trinket = null;
         if (trinketId && trinketId !== 0) {
             let name = '';
             let img = ITEM_URL + 'empty.png';
             let loaded = false;
-            if (itemData && itemData[trinketId]) {
-                name = itemData[trinketId].name;
+            if (itemData && itemData[String(trinketId)]) {
+                const tObj = itemData[String(trinketId)] as Record<string, unknown>;
+                name = String(tObj.name || '');
                 img = `${ITEM_URL}${trinketId}.png`;
                 loaded = true;
             }
@@ -83,9 +90,14 @@ const MatchPage: React.FC = () => {
         }
         return (
             <div
-                key={p.puuid}
+                key={String(p.puuid)}
                 className="flex flex-col py-2 border-b border-neutral-700 last:border-b-0 cursor-pointer hover:bg-neutral-700/40"
-                onClick={() => setSelectedPlayer({ puuid: p.puuid, name: riotName + (riotTag ? `#${riotTag}` : '') })}
+                onClick={() =>
+                    setSelectedPlayer({
+                        puuid: String(p.puuid),
+                        name: riotName + (riotTag ? `#${riotTag}` : ''),
+                    })
+                }
             >
                 <div className="flex items-center gap-2">
                     <span className="w-40">{riotName}<span className="text-primary-300">#{riotTag}</span></span>
@@ -96,7 +108,7 @@ const MatchPage: React.FC = () => {
                             className="w-8 h-8 rounded-full border border-neutral-600"
                             onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
                         />
-                        {p.championName}
+                        {String(p.championName)}
                     </span>
                     <span className="flex items-start ml-2 gap-2">
                         {/* Main items: 2 rows of 3 */}
@@ -175,14 +187,14 @@ const MatchPage: React.FC = () => {
                     <div>
                         <h2 className="text-xl font-bold mb-2 text-blue-300">Team 1</h2>
                         <div className="bg-neutral-800/60 rounded p-4">
-                            {teams['100'].map(p => renderPlayer(p, itemData))}
+                            {teams['100'].map(p => renderPlayer(p as Record<string, unknown>, itemData))}
                         </div>
                     </div>
                     {/* Team 2 */}
                     <div>
                         <h2 className="text-xl font-bold mb-2 text-red-300">Team 2</h2>
                         <div className="bg-neutral-800/60 rounded p-4">
-                            {teams['200'].map(p => renderPlayer(p, itemData))}
+                            {teams['200'].map(p => renderPlayer(p as Record<string, unknown>, itemData))}
                         </div>
                     </div>
                 </div>

@@ -7,6 +7,7 @@ from database import db
 if TYPE_CHECKING:
     from .user_preference import UserPreference
 
+
 class User(db.Model):
     __tablename__ = 'users'
     

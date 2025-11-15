@@ -2,6 +2,7 @@ import { useAuth } from 'react-oidc-context';
 import { useSummoner, usePlayerMatchHistory } from '../api/hooks';
 import type { Match } from '../api/client';
 import { useParams, Link } from 'react-router-dom';
+import { useGameData } from '../context/gameDataHelpers';
 
 const formatChampionName = (championName: string): string => {
   const specialCases: Record<string, string> = {
@@ -18,9 +19,11 @@ const formatChampionName = (championName: string): string => {
 
 
 
+
 function PlayerPageInner() {
   const auth = useAuth();
   const { gameName = '', tagLine = '' } = useParams();
+  const { itemLoading, itemError } = useGameData();
 
   const { data: summoner, isLoading, error } = useSummoner(gameName, tagLine);
   const {
@@ -38,6 +41,29 @@ function PlayerPageInner() {
             <p className="text-primary-50 text-lg">
               Please sign in to view players and match history.
             </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (itemLoading) {
+    return (
+      <div className="min-h-screen bg-primary-700 text-white p-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold mb-8">Loading game data...</h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (itemError) {
+    return (
+      <div className="min-h-screen bg-primary-700 text-white p-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold mb-8">Error loading game data</h1>
+          <div className="bg-primary-600/50 border border-primary-500 rounded p-6">
+            <p className="text-primary-50 text-lg">{itemError}</p>
           </div>
         </div>
       </div>

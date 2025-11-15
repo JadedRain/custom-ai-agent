@@ -8,6 +8,7 @@ from .build_type import BuildType
 if TYPE_CHECKING:
     from .user import User
 
+
 class UserPreference(db.Model):
     __tablename__ = 'user_preferences'
     

@@ -1,26 +1,15 @@
-import React, { createContext, useContext, useCallback } from 'react';
+import React, { useCallback } from 'react';
+import { SearchContext } from './SearchContext';
+
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 
-interface SearchContextType {
-  gameName: string;
-  tagLine: string;
-  isLoading: boolean;
-  onSearch: (gameName: string, tagLine: string) => void;
-}
 
-const SearchContext = createContext<SearchContextType | undefined>(undefined);
-
-export const useSearchContext = () => {
-  const ctx = useContext(SearchContext);
-  if (!ctx) throw new Error('useSearchContext must be used within a SearchProvider');
-  return ctx;
-};
 
 export const SearchProvider: React.FC<{
   children: React.ReactNode;
   initialGameName: string;
   initialTagLine: string;
-  queryKey: (gameName: string, tagLine: string) => any[];
+  queryKey: (gameName: string, tagLine: string) => unknown[];
 }> = ({ children, initialGameName, initialTagLine, queryKey }) => {
   const [gameName, setGameName] = React.useState(initialGameName);
   const [tagLine, setTagLine] = React.useState(initialTagLine);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSearchContext } from '../context/SearchContext';
+import { useSearchContext } from '../context/searchContextHelpers';
 import { useNavigate } from 'react-router-dom';
 
 const SearchBar: React.FC = () => {

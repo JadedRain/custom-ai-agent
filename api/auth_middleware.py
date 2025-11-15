@@ -19,18 +19,20 @@ keycloak_openid = KeycloakOpenID(
 PUBLIC_ROUTES = [
 ]
 
+
 def get_token_from_header():
     auth_header = request.headers.get('Authorization')
-    
+
     if not auth_header:
         return None
-    
+
     parts = auth_header.split()
-    
+
     if len(parts) != 2 or parts[0].lower() != 'bearer':
         return None
-    
+
     return parts[1]
+
 
 def validate_token(token):
     try:
@@ -39,13 +41,13 @@ def validate_token(token):
             + keycloak_openid.public_key()
             + "\n-----END PUBLIC KEY-----"
         )
-        
+
         options = {
             "verify_signature": True,
             "verify_aud": False,  # Set to True if you want to verify audience
             "verify_exp": True,
         }
-        
+
         decoded_token = jwt.decode(
             token,
             public_key,
@@ -53,9 +55,9 @@ def validate_token(token):
             options=options,
             audience=KEYCLOAK_CLIENT_ID if KEYCLOAK_CLIENT_SECRET else None
         )
-        
+
         return decoded_token
-    
+
     except jwt.ExpiredSignatureError:
         return None
     except jwt.InvalidTokenError:
@@ -64,19 +66,20 @@ def validate_token(token):
         print(f"Token validation error: {str(e)}")
         return None
 
+
 def require_auth(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         token = get_token_from_header()
-        
+
         if not token:
             return jsonify({'error': 'No authorization token provided'}), 401
-        
+
         decoded_token = validate_token(token)
-        
+
         if not decoded_token:
             return jsonify({'error': 'Invalid or expired token'}), 401
-        
+
         g.user = {
             'sub': decoded_token.get('sub'),
             'email': decoded_token.get('email'),
@@ -84,32 +87,32 @@ def require_auth(f):
             'roles': decoded_token.get('realm_access', {}).get('roles', []),
             'token': decoded_token
         }
-        
+
         return f(*args, **kwargs)
-    
+
     return decorated_function
 
+
 def init_auth_middleware(app):
-    
     @app.before_request
     def check_authentication():
-        
+
         if request.path in PUBLIC_ROUTES:
             return None
-        
+
         if request.method == 'OPTIONS':
             return None
-        
+
         token = get_token_from_header()
-        
+
         if not token:
             return jsonify({'error': 'No authorization token provided'}), 401
-        
+
         decoded_token = validate_token(token)
-        
+
         if not decoded_token:
             return jsonify({'error': 'Invalid or expired token'}), 401
-        
+
         g.user = {
             'sub': decoded_token.get('sub'),
             'email': decoded_token.get('email'),
@@ -117,5 +120,4 @@ def init_auth_middleware(app):
             'roles': decoded_token.get('realm_access', {}).get('roles', []),
             'token': decoded_token
         }
-        
         return None

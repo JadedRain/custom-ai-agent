@@ -1,5 +1,6 @@
 import enum
 
+
 class BuildType(enum.Enum):
     GREEDY = "greedy"
     DEFENSIVE = "defensive"
