@@ -165,5 +165,12 @@ def update_user_preferences():
     })
 
 
+# Empty endpoint for best item generation
+@app.route('/api/generate-best-item', methods=['POST'])
+def generate_best_item():
+    # Placeholder for future implementation
+    return jsonify({'error': 'Not implemented'}), 501
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
