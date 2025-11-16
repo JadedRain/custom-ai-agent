@@ -1,6 +1,19 @@
+
 import React, { useState, useEffect } from 'react';
 import { useUserPreferences, useUpdateUserPreferences } from '../api/hooks';
 import type { BuildType } from '../api/client';
+import { z } from 'zod';
+
+const BuildPreferenceSchema = z.object({
+  user: z.object({
+    username: z.string(),
+    email: z.string().optional().nullable(),
+    created_at: z.string(),
+  }),
+  preference: z.object({
+    build_type: z.enum(['greedy', 'defensive', 'offensive']),
+  }),
+});
 
 const buildTypes: { value: BuildType; label: string; description: string }[] = [
   {
@@ -25,9 +38,16 @@ export const BuildPreferenceSelector: React.FC = () => {
   const updatePreferences = useUpdateUserPreferences();
   const [selectedBuildType, setSelectedBuildType] = useState<BuildType | null>(null);
 
+
   useEffect(() => {
     if (data && selectedBuildType === null) {
-      setSelectedBuildType(data.preference.build_type);
+      const parsed = BuildPreferenceSchema.safeParse(data);
+      if (parsed.success) {
+        setSelectedBuildType(parsed.data.preference.build_type);
+      } else {
+        // Optionally handle schema validation error
+        setSelectedBuildType(null);
+      }
     }
   }, [data, selectedBuildType]);
 
@@ -51,7 +71,18 @@ export const BuildPreferenceSelector: React.FC = () => {
     );
   }
 
-  if (!data) return null;
+
+  // Validate data before rendering
+  const parsed = data ? BuildPreferenceSchema.safeParse(data) : null;
+  if (!parsed || !parsed.success) {
+    return (
+      <div className="error-bg border rounded p-4 mb-6">
+        <p className="text-primary-50">
+          Error: Invalid build preference data from server.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="card-bg rounded-lg p-6">
@@ -93,11 +124,11 @@ export const BuildPreferenceSelector: React.FC = () => {
           onClick={handleSave}
           disabled={
             updatePreferences.isPending ||
-            selectedBuildType === data.preference.build_type
+            selectedBuildType === parsed.data.preference.build_type
           }
           className={`px-6 py-2 rounded font-semibold transition-colors ${
             updatePreferences.isPending ||
-            selectedBuildType === data.preference.build_type
+            selectedBuildType === parsed.data.preference.build_type
               ? 'bg-neutral-600 text-neutral-300 cursor-not-allowed'
               : 'bg-primary-300 hover:bg-primary-400 text-white'
           }`}

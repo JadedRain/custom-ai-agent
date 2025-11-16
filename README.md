@@ -180,16 +180,18 @@ Rubric items:
 - 3+ reausable form input components
 
 Features:
-- "Record" game information at varius points with recommendation and store in database
+- "Record" game information at varius points with recommendation
 - Walk through recorded games to see recommendation
 
 #### Delivered
 
 Rubric Items:
-
+- 2+ Reasuable layout components
 
 Features:
-
+- See game information at point in the game along timeline. Without recommendation
+- Very basic item tool created
+- output/zod
 ### Nov 19
 
 #### Estimates:
