@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "echo 'No tests yet' && exit 0"
+    "test": "echo 'No tests yet' && exit 0",
+    "pw:install": "npx playwright install --with-deps",
+    "pw:test": "npx playwright test --project=chromium --reporter=list"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.5",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/postcss": "^4.1.16",
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",

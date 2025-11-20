@@ -207,9 +207,11 @@ Features:
 #### Delivered
 
 Rubric Items:
-
+- Smooth experience
+- Local storage
 
 Features:
+- Draft planner
 
 ### Nov 22
 

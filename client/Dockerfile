@@ -7,7 +7,7 @@ COPY . .
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 ENV CI=true
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 EXPOSE 5173
 

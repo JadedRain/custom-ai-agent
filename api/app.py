@@ -6,6 +6,7 @@ from riot_api import get_match_details, get_match_timeline
 from auth_middleware import init_auth_middleware
 from database import init_db, db
 from models import User, UserPreference, BuildType
+from ai_chat_tools import get_cached_champion_data
 
 load_dotenv()
 
@@ -170,6 +171,20 @@ def update_user_preferences():
 def generate_best_item():
     # Placeholder for future implementation
     return jsonify({'error': 'Not implemented'}), 501
+
+
+@app.route('/api/champions', methods=['GET'])
+def champions():
+    """Return cached champion data from ddragon for the Draft Planner UI.
+
+    Response JSON shape: { data: { <championId>: { ...championData } } }
+    The champion data is the same structure returned by Riot ddragon `champion.json`.
+    """
+    try:
+        champ_data = get_cached_champion_data()
+        return jsonify({'data': champ_data})
+    except Exception as e:
+        return jsonify({'error': 'Failed to load champion data', 'detail': str(e)}), 500
 
 
 if __name__ == '__main__':

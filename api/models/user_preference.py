@@ -11,23 +11,31 @@ if TYPE_CHECKING:
 
 class UserPreference(db.Model):
     __tablename__ = 'user_preferences'
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(db.ForeignKey('users.id'), nullable=False, unique=True, index=True)
+    user_id: Mapped[int] = mapped_column(
+        db.ForeignKey('users.id'),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
     build_type: Mapped[BuildType] = mapped_column(
         SQLEnum(BuildType),
         nullable=False,
         default=BuildType.GREEDY
     )
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # Relationship to user
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+    )
+
     user: Mapped["User"] = relationship("User", back_populates="preference")
-    
+
     def __repr__(self):
         return f"<UserPreference user_id={self.user_id} build_type={self.build_type.value}>"
-    
+
     def to_dict(self):
         return {
             'id': self.id,

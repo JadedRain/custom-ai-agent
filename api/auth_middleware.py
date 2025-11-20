@@ -17,6 +17,7 @@ keycloak_openid = KeycloakOpenID(
 )
 
 PUBLIC_ROUTES = [
+    '/api/champions',
 ]
 
 

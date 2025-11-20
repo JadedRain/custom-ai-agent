@@ -10,25 +10,36 @@ if TYPE_CHECKING:
 
 class User(db.Model):
     __tablename__ = 'users'
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
-    keycloak_sub: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
+    keycloak_sub: Mapped[str] = mapped_column(
+        String(255),
+        unique=True,
+        nullable=False,
+        index=True,
+    )
     email: Mapped[str] = mapped_column(String(255), nullable=True)
     username: Mapped[str] = mapped_column(String(255), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # Relationship to preferences
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+    )
+
     preference: Mapped["UserPreference"] = relationship(
         "UserPreference",
         back_populates="user",
         uselist=False,
         cascade="all, delete-orphan"
     )
-    
+
     def __repr__(self):
         return f"<User {self.username} ({self.keycloak_sub})>"
-    
+
     def to_dict(self):
         return {
             'id': self.id,
