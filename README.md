@@ -187,11 +187,12 @@ Features:
 
 Rubric Items:
 - 2+ Reasuable layout components
+- output/zod
 
 Features:
 - See game information at point in the game along timeline. Without recommendation
 - Very basic item tool created
-- output/zod
+
 ### Nov 19
 
 #### Estimates:
