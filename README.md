@@ -35,7 +35,7 @@ Working with live game data
 2. Player lookup page
 3. Match history page
 4. Player preference page
-5. Rune recommendation page
+5. Draft Planner page
 6. Game build recommendation
 7. Admin page
 8. Player analytics page

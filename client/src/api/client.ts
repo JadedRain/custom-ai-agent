@@ -129,4 +129,16 @@ export const apiClient = {
     }
     return response.json();
   },
+  getAdminUsers: async (token: string): Promise<{ users: { user: User; preference: UserPreference | null }[] }> => {
+    const response = await fetch(
+      `${API_BASE_URL}/api/admin/users`,
+      {
+        headers: createHeaders(token),
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Failed to fetch admin users');
+    }
+    return response.json();
+  },
 };

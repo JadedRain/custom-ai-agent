@@ -187,5 +187,34 @@ def champions():
         return jsonify({'error': 'Failed to load champion data', 'detail': str(e)}), 500
 
 
+@app.route('/api/admin/users', methods=['GET'])
+def admin_list_users():
+    # Only allow a specific admin email to access this endpoint
+    if not hasattr(g, 'user') or not g.user:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    email = g.user.get('email')
+    if not email or email.lower() != 'loganfake@gmail.com':
+        return jsonify({'error': 'Forbidden'}), 403
+
+    users = User.query.all()
+    result = []
+    for u in users:
+        pref = None
+        try:
+            pref_obj = UserPreference.query.filter_by(user_id=u.id).first()
+            if pref_obj:
+                pref = pref_obj.to_dict()
+        except Exception:
+            pref = None
+
+        result.append({
+            'user': u.to_dict(),
+            'preference': pref,
+        })
+
+    return jsonify({'users': result})
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

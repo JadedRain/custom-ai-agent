@@ -64,3 +64,21 @@ export const useUpdateUserPreferences = () => {
     },
   });
 };
+
+export const useAdminUsers = () => {
+  const auth = useAuth();
+
+  return useQuery({
+    queryKey: ['adminUsers'],
+    queryFn: async () => {
+      if (!auth.user?.access_token) throw new Error('Not authenticated');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/users`,
+        { headers: auth.user?.access_token ? { Authorization: `Bearer ${auth.user.access_token}` } : {} }
+      );
+      if (!response.ok) throw new Error('Failed to fetch admin users');
+      return response.json();
+    },
+    enabled: !!auth.user?.access_token,
+  });
+};

@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PlayerPage } from './pages/PlayerPage';
 import { SettingsPage } from './pages/SettingsPage';
 import DraftPlannerPage from './pages/DraftPlannerPage';
+import AdminPage from './pages/AdminPage';
 import { AuthButton } from './components/AuthButton';
 import { Navbar } from './components/Navbar';
 import { SearchProvider } from './context/SearchContext.tsx';
@@ -44,6 +45,7 @@ function App() {
             <Route path="/player/:gameName/:tagLine" element={<PlayerPage />} />
             <Route path="/match/:matchId" element={<MatchPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="/draft-planner" element={<DraftPlannerPage />} />
           </Routes>
         </BrowserRouter>
