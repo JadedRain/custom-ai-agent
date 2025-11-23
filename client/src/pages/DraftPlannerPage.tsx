@@ -4,9 +4,27 @@ import ChampionList from '../components/ChampionList';
 import { DraftPlannerProvider } from '../context/DraftPlannerContext';
 import { useDraftPlanner } from '../context/draftPlannerCore';
 import { PICK_ORDER } from '../lib/draftConstants';
+import { useAuth } from 'react-oidc-context';
+import { AuthButton } from '../components/AuthButton';
 
 
 export default function DraftPlannerPage() {
+  const auth = useAuth();
+
+  if (!auth.isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-primary-700 text-white p-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold mb-8">Draft Planner</h1>
+          <div className="bg-primary-600/50 border border-primary-500 rounded p-6">
+            <p className="text-primary-50 text-lg mb-4">Please sign in to view and use the Draft Planner.</p>
+            <AuthButton />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <DraftPlannerProvider>
       <DraftPlannerPageInner />

@@ -11,6 +11,8 @@ import { SearchProvider } from './context/SearchContext.tsx';
 import  SearchBar  from './components/SearchBar';
 import MatchPage from './pages/MatchPage';
 import { GameDataProvider } from './context/GameDataProvider';
+import ChampionsPage from './pages/ChampionsPage';
+import ChampionDetailPage from './pages/ChampionDetailPage';
 
 function HomePage() {
   const auth = useAuth();
@@ -46,6 +48,8 @@ function App() {
             <Route path="/match/:matchId" element={<MatchPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/champions" element={<ChampionsPage />} />
+            <Route path="/champion/:id" element={<ChampionDetailPage />} />
             <Route path="/draft-planner" element={<DraftPlannerPage />} />
           </Routes>
         </BrowserRouter>

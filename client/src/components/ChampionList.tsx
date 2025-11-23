@@ -50,7 +50,7 @@ const ChampionList: React.FC<Props> = ({ champions, loading, error, onChampionCl
               >
                 <div className="w-20 h-20 bg-neutral-800/40 rounded-sm overflow-hidden border border-neutral-700 flex items-center justify-center">
                   {c.imageUrl ? (
-                    <img src={c.imageUrl} alt={c.name} className="w-full h-full object-cover" />
+                    <img src={c.imageUrl} alt={c.name} className="w-full h-full object-contain" />
                   ) : (
                     <div className="text-neutral-400">{c.name}</div>
                   )}

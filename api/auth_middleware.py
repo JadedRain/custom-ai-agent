@@ -18,6 +18,7 @@ keycloak_openid = KeycloakOpenID(
 
 PUBLIC_ROUTES = [
     '/api/champions',
+    '/api/champion-winrate',
 ]
 
 
@@ -98,8 +99,10 @@ def init_auth_middleware(app):
     @app.before_request
     def check_authentication():
 
-        if request.path in PUBLIC_ROUTES:
-            return None
+        # Allow public routes by prefix match so route params are covered
+        for pub in PUBLIC_ROUTES:
+            if request.path.startswith(pub):
+                return None
 
         if request.method == 'OPTIONS':
             return None

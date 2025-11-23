@@ -93,7 +93,7 @@ export const DraftPlannerProvider: React.FC<React.PropsWithChildren<object>> = (
     const rightChanged = normalizedRight.some((s, i) => s !== rightSlots[i]);
     if (leftChanged) setLeftSlots(normalizedLeft);
     if (rightChanged) setRightSlots(normalizedRight);
-  }, [champions]);
+  }, [champions, leftSlots, rightSlots]);
 
   React.useEffect(() => {
       const leftData = leftSlots.map((id) => {

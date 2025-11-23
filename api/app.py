@@ -1,8 +1,16 @@
 from flask import Flask, jsonify, request, g
 from flask_cors import CORS
 from dotenv import load_dotenv
-from riot_api import get_summoner_by_riot_id, get_match_history
-from riot_api import get_match_details, get_match_timeline
+from riot_api import (
+    get_summoner_by_riot_id,
+    get_match_history,
+    get_match_details,
+    get_match_timeline,
+    get_champion_winrate_na,
+    get_champion_winrate_by_region_rank,
+    get_champion_item_stats_na,
+    get_champion_item_stats_by_region_rank,
+)
 from auth_middleware import init_auth_middleware
 from database import init_db, db
 from models import User, UserPreference, BuildType
@@ -189,7 +197,6 @@ def champions():
 
 @app.route('/api/admin/users', methods=['GET'])
 def admin_list_users():
-    # Only allow a specific admin email to access this endpoint
     if not hasattr(g, 'user') or not g.user:
         return jsonify({'error': 'Not authenticated'}), 401
 
@@ -214,6 +221,110 @@ def admin_list_users():
         })
 
     return jsonify({'users': result})
+
+
+@app.route('/api/champion-winrate/<champion_id>', methods=['GET'])
+def champion_winrate(champion_id):
+    # Two modes:
+    # 1) Client supplies comma-separated `puuids` query param
+    # 2) Client supplies `region` (e.g. NA) and optional `tier`/`division` to auto-select players
+    puuids_raw = request.args.get('puuids')
+    per_player = request.args.get('count', 20, type=int)
+    max_total = request.args.get('max', 200, type=int)
+
+    if puuids_raw:
+        puuids = [p.strip() for p in puuids_raw.split(',') if p.strip()]
+        if not puuids:
+            return jsonify({'error': 'No valid puuids provided'}), 400
+
+        try:
+            result = get_champion_winrate_na(
+                champion_id,
+                puuids,
+                per_player_count=per_player,
+                max_total_matches=max_total,
+            )
+            return jsonify(result)
+        except Exception as e:
+            return jsonify({'error': 'Failed to compute winrate', 'detail': str(e)}), 500
+
+    # If no puuids provided, try region/tier-based sampling
+    region = request.args.get('region')
+    if not region:
+        return (
+            jsonify({'error': 'Either puuids or region must be provided'}),
+            400,
+        )
+
+    tier = request.args.get('tier', 'DIAMOND')
+    division = request.args.get('division')
+    queue = request.args.get('queue', 'RANKED_SOLO_5x5')
+    max_players = request.args.get('max_players', 50, type=int)
+
+    try:
+        result = get_champion_winrate_by_region_rank(
+            champion_id,
+            region=region,
+            tier=tier,
+            division=division,
+            queue=queue,
+            per_player_count=per_player,
+            max_total_matches=max_total,
+            max_players=max_players,
+        )
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': 'Failed to compute winrate', 'detail': str(e)}), 500
+
+
+@app.route('/api/champion-item-winrate/<champion_id>', methods=['GET'])
+def champion_item_winrate(champion_id):
+    # Two modes: puuids OR region/tier (NA)
+    puuids_raw = request.args.get('puuids')
+    per_player = request.args.get('count', 20, type=int)
+    max_total = request.args.get('max', 200, type=int)
+
+    if puuids_raw:
+        puuids = [p.strip() for p in puuids_raw.split(',') if p.strip()]
+        if not puuids:
+            return jsonify({'error': 'No valid puuids provided'}), 400
+        try:
+            result = get_champion_item_stats_na(
+                champion_id,
+                puuids,
+                per_player_count=per_player,
+                max_total_matches=max_total,
+            )
+            return jsonify(result)
+        except Exception as e:
+            return jsonify({'error': 'Failed to compute item stats', 'detail': str(e)}), 500
+
+    region = request.args.get('region')
+    if not region:
+        return (
+            jsonify({'error': 'Either puuids or region must be provided'}),
+            400,
+        )
+
+    tier = request.args.get('tier', 'DIAMOND')
+    division = request.args.get('division')
+    queue = request.args.get('queue', 'RANKED_SOLO_5x5')
+    max_players = request.args.get('max_players', 50, type=int)
+
+    try:
+        result = get_champion_item_stats_by_region_rank(
+            champion_id,
+            region=region,
+            tier=tier,
+            division=division,
+            queue=queue,
+            per_player_count=per_player,
+            max_total_matches=max_total,
+            max_players=max_players,
+        )
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': 'Failed to compute item stats', 'detail': str(e)}), 500
 
 
 if __name__ == '__main__':

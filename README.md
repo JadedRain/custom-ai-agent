@@ -227,9 +227,13 @@ Features:
 #### Delivered
 
 Rubric Items:
-
+- Mobile friendly
 
 Features:
+- Admin page
+- Champion list page
+- Champion details page
+
 
 ### Nov 25
 

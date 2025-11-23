@@ -17,6 +17,7 @@ export const Navbar: React.FC = () => {
         {auth.isAuthenticated && ((auth.user?.profile as Record<string, unknown>)?.email as string || '').toLowerCase() === 'loganfake@gmail.com' && (
           <Link to="/admin" className="hover:text-primary-100">Admin</Link>
         )}
+        <Link to="/champions" className="hover:text-primary-100">Champions</Link>
       </div>
       {!isHome && (
         <div className="flex-1 flex justify-center">

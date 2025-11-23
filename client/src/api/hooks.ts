@@ -20,6 +20,40 @@ export const useMatchDetails = (matchId: string) => {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from 'react-oidc-context';
 import { apiClient, type BuildType } from './client';
+import { CDN_BASE } from '../lib/draftConstants';
+
+export type DDragonChampion = {
+  id: string;
+  key: string;
+  name: string;
+  title?: string;
+  blurb?: string;
+  info?: Record<string, unknown>;
+  stats?: Record<string, number>;
+  passive?: { name: string; description: string; image?: { full: string } };
+  spells?: Array<{ name: string; description: string; tooltip?: string; image?: { full: string } }>;
+  image?: { full: string };
+};
+
+export const useAllChampions = () => {
+  return useQuery<{ byId: Record<string, DDragonChampion>; list: Array<DDragonChampion & { imageUrl?: string }> }>({
+    queryKey: ['champions'],
+    queryFn: async () => {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/champions`);
+      if (!response.ok) throw new Error('Failed to fetch champions');
+      const json = await response.json();
+      const data: Record<string, DDragonChampion> = json.data || {};
+      // convert to array and attach imageUrl
+      const arr = Object.values(data).map((c) => ({
+        ...c,
+        imageUrl: c.image?.full ? `${CDN_BASE}${c.image.full}` : undefined,
+      }));
+      // sort alphabetically
+      arr.sort((a, b) => a.name.localeCompare(b.name));
+      return { byId: data, list: arr } as { byId: Record<string, DDragonChampion>; list: Array<DDragonChampion & { imageUrl?: string }>; };
+    },
+  });
+};
 
 export const useSummoner = (gameName: string, tagLine: string) => {
   const auth = useAuth();
