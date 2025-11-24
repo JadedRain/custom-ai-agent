@@ -58,6 +58,11 @@ jobs:
           push: true
           tags: jadedrain/ai-agent-backend:latest
 
+      - name: Set up kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBECONFIG_DATA" > ~/.kube/config
+          
       - name: Apply Kubernetes configuration
         run: |
           kubectl apply -f kube/
