@@ -67,20 +67,20 @@ jobs:
         env:
           KUBECONFIG: ~/.kube/config
 
-      - name: Debug kubeconfig
-        run: |
-          echo "----- kubeconfig first lines -----"
-          head -n 20 ~/.kube/config || echo "config missing"
-          echo "----------------------------------"
-        env:
-          KUBECONFIG: ~/.kube/config
+      # - name: Debug kubeconfig
+      #   run: |
+      #     echo "----- kubeconfig first lines -----"
+      #     head -n 20 ~/.kube/config || echo "config missing"
+      #     echo "----------------------------------"
+      #   env:
+      #     KUBECONFIG: ~/.kube/config
 
-      - name: Verify kubectl config being used
-        run: |
-          echo "kubectl sees config at:"
-          kubectl config view --minify
-        env:
-          KUBECONFIG: ~/.kube/config
+      # - name: Verify kubectl config being used
+      #   run: |
+      #     echo "kubectl sees config at:"
+      #     kubectl config view --minify
+      #   env:
+      #     KUBECONFIG: ~/.kube/config
       - name: Apply Kubernetes configuration
         run: |
           export KUBECONFIG=$HOME/.kube/config
