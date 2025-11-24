@@ -69,7 +69,6 @@ jobs:
 
       - name: Apply Kubernetes configuration
         run: |
-          kubectl get nodes
           kubectl apply -f kube/
           kubectl rollout restart deployment/ai-agent-frontend -n logan-final
           kubectl rollout restart deployment/ai-agent-api -n logan-final
