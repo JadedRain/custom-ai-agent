@@ -61,10 +61,17 @@ jobs:
       - name: Set up kubeconfig
         run: |
           mkdir -p ~/.kube
-          echo "$KUBECONFIG_DATA" > ~/.kube/config
-          
+          echo "${{ secrets.KUBECONFIG_DATA }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+          ls -l ~/.kube
+        env:
+          KUBECONFIG: ~/.kube/config
+
       - name: Apply Kubernetes configuration
         run: |
+          kubectl get nodes
           kubectl apply -f kube/
           kubectl rollout restart deployment/ai-agent-frontend -n logan-final
           kubectl rollout restart deployment/ai-agent-api -n logan-final
+        env:
+          KUBECONFIG: ~/.kube/config
