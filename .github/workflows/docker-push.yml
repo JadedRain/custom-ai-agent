@@ -83,6 +83,7 @@ jobs:
           KUBECONFIG: ~/.kube/config
       - name: Apply Kubernetes configuration
         run: |
+          export KUBECONFIG=$HOME/.kube/config
           kubectl apply -f kube/
           kubectl rollout restart deployment/ai-agent-frontend -n logan-final
           kubectl rollout restart deployment/ai-agent-api -n logan-final
