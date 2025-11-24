@@ -74,6 +74,13 @@ jobs:
           echo "----------------------------------"
         env:
           KUBECONFIG: ~/.kube/config
+
+      - name: Verify kubectl config being used
+        run: |
+          echo "kubectl sees config at:"
+          kubectl config view --minify
+        env:
+          KUBECONFIG: ~/.kube/config
       - name: Apply Kubernetes configuration
         run: |
           kubectl apply -f kube/
