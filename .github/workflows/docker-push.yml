@@ -67,6 +67,13 @@ jobs:
         env:
           KUBECONFIG: ~/.kube/config
 
+      - name: Debug kubeconfig
+        run: |
+          echo "----- kubeconfig first lines -----"
+          head -n 20 ~/.kube/config || echo "config missing"
+          echo "----------------------------------"
+        env:
+          KUBECONFIG: ~/.kube/config
       - name: Apply Kubernetes configuration
         run: |
           kubectl apply -f kube/
