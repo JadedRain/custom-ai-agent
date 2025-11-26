@@ -14,7 +14,13 @@ from riot_api import (
 from auth_middleware import init_auth_middleware
 from database import init_db, db
 from models import User, UserPreference, BuildType
-from ai_chat_tools import get_cached_champion_data
+from ai_chat_tools import (
+    get_cached_champion_data,
+    get_cached_item_data,
+    get_champion_data,
+    get_item_data,
+    generate_best_item_tool,
+)
 
 load_dotenv()
 
@@ -181,13 +187,87 @@ def generate_best_item():
     return jsonify({'error': 'Not implemented'}), 501
 
 
+@app.route('/api/ai/chat', methods=['POST'])
+def ai_chat():
+    payload = request.get_json() or {}
+    model = payload.get('model')
+    messages = payload.get('messages', [])
+    tools = payload.get('tools', [])
+    tool_calls = payload.get('tool_calls') or payload.get('calls') or []
+
+    TOOL_FUNCTIONS = {
+        'generate_best_item': generate_best_item_tool,
+        'get_champion_data': get_champion_data,
+        'get_cached_champion_data': get_cached_champion_data,
+        'get_item_data': get_item_data,
+        'get_cached_item_data': get_cached_item_data,
+    }
+
+    # If no explicit calls provided, return available tools and their basic
+    # info (from the provided `tools` schema when present).
+    if not tool_calls:
+        available = []
+        for name, fn in TOOL_FUNCTIONS.items():
+            # Use any provided schema info from `tools` array if present
+            schema = None
+            for t in tools:
+                func = t.get('function') if isinstance(t, dict) else None
+                if func and func.get('name') == name:
+                    schema = func
+                    break
+            available.append({'name': name, 'has_schema': bool(schema), 'schema': schema})
+
+        return jsonify({
+            'model': model,
+            'available_tools': available,
+            'message_count': len(messages),
+        })
+
+    responses = []
+    for call in tool_calls:
+        name = call.get('name')
+        params = call.get('parameters', {}) or {}
+        fn = TOOL_FUNCTIONS.get(name)
+        if not fn:
+            responses.append({'name': name, 'error': f'Unknown tool: {name}'})
+            continue
+
+        try:
+            # Call the tool. Allow both keyword and positional styles; most tools
+            # accept keywords.
+            if isinstance(params, dict):
+                result = fn(**params)
+            else:
+                # If parameters are a list/tuple, pass as positional
+                result = fn(*params)
+
+            responses.append({'name': name, 'result': result})
+        except TypeError as te:
+            responses.append({'name': name, 'error': f'Parameter mismatch: {str(te)}'})
+        except Exception as e:
+            responses.append({'name': name, 'error': f'Execution error: {str(e)}'})
+
+    # Return a chat-like structure that an LLM orchestrator could consume
+    return jsonify({
+        'id': None,
+        'object': 'chat.completion',
+        'model': model,
+        'messages': messages,
+        'tool_responses': responses,
+        'choices': [
+            {
+                'message': {
+                    'role': 'assistant',
+                    'content': None,
+                },
+                'finish_reason': 'tools_executed',
+            }
+        ],
+    })
+
+
 @app.route('/api/champions', methods=['GET'])
 def champions():
-    """Return cached champion data from ddragon for the Draft Planner UI.
-
-    Response JSON shape: { data: { <championId>: { ...championData } } }
-    The champion data is the same structure returned by Riot ddragon `champion.json`.
-    """
     try:
         champ_data = get_cached_champion_data()
         return jsonify({'data': champ_data})

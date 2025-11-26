@@ -238,8 +238,8 @@ def get_champion_item_stats_na(
     wins = 0
     matches_scanned = 0
 
-    builds = {} 
-    item_counts = {}  
+    builds = {}
+    item_counts = {}
 
     for puuid in puuids:
         try:

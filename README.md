@@ -248,9 +248,15 @@ Features:
 #### Delivered
 
 Rubric Items:
+- 10+ pages 
+- Autonomous agent function
 
 
 Features:
+- Page for list of professional players
+- Created agent function to help get build recommendation
+- Build is recommended based on information from game
+
 
 ### Dec 3
 

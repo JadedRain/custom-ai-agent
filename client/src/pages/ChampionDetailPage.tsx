@@ -1,3 +1,4 @@
+import { } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAllChampions } from '../api/hooks';
 import type { DDragonChampion } from '../api/hooks';
@@ -92,7 +93,10 @@ export default function ChampionDetailPage() {
           </div>
         </section>
 
-        <Link to="/champions" className="text-primary-300">Back to champions</Link>
+        <div className="mt-6 flex items-center gap-4">
+          <Link to="/ai-tool" className="px-4 py-2 rounded bg-secondary-600 text-white hover:bg-secondary-500">Open AI Tool Page</Link>
+          <Link to="/champions" className="text-primary-300">Back to champions</Link>
+        </div>
       </div>
     </div>
   );

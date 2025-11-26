@@ -14,6 +14,8 @@ export const Navbar: React.FC = () => {
       <div className="flex gap-4 items-center">
         <Link to="/" className="text-white hover:text-primary-100">Home</Link>
         <Link to="/draft-planner" className="hover:text-primary-100">Draft Planner</Link>
+        <Link to="/pro-players" className="hover:text-primary-100">Pro Players</Link>
+        <Link to="/ai-tool" className="hover:text-primary-100">AI Tool</Link>
         {auth.isAuthenticated && ((auth.user?.profile as Record<string, unknown>)?.email as string || '').toLowerCase() === 'loganfake@gmail.com' && (
           <Link to="/admin" className="hover:text-primary-100">Admin</Link>
         )}
