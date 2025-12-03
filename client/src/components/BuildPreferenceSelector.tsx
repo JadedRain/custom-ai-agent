@@ -63,7 +63,7 @@ export const BuildPreferenceSelector: React.FC = () => {
 
   if (error) {
     return (
-      <div className="error-bg border rounded p-4 mb-6">
+      <div className="bg-red-900/20 border border-red-700 rounded p-4 mb-6">
         <p className="text-primary-50">
           Error: {error instanceof Error ? error.message : 'Failed to load build preferences'}
         </p>
@@ -76,7 +76,7 @@ export const BuildPreferenceSelector: React.FC = () => {
   const parsed = data ? BuildPreferenceSchema.safeParse(data) : null;
   if (!parsed || !parsed.success) {
     return (
-      <div className="error-bg border rounded p-4 mb-6">
+      <div className="bg-red-900/20 border border-red-700 rounded p-4 mb-6">
         <p className="text-primary-50">
           Error: Invalid build preference data from server.
         </p>
@@ -85,7 +85,7 @@ export const BuildPreferenceSelector: React.FC = () => {
   }
 
   return (
-    <div className="card-bg rounded-lg p-6">
+    <div className="green-bg-medium green-border border rounded-lg p-6">
       <h2 className="text-2xl font-semibold mb-4">Build Preferences</h2>
       <p className="text-neutral-100 mb-6">
         Choose your preferred build strategy for AI-generated recommendations.
@@ -126,11 +126,11 @@ export const BuildPreferenceSelector: React.FC = () => {
             updatePreferences.isPending ||
             selectedBuildType === parsed.data.preference.build_type
           }
-          className={`px-6 py-2 rounded font-semibold transition-colors ${
+          className={`px-6 py-2 rounded font-semibold transition-colors shadow-md ${
             updatePreferences.isPending ||
             selectedBuildType === parsed.data.preference.build_type
               ? 'bg-neutral-600 text-neutral-300 cursor-not-allowed'
-              : 'bg-primary-300 hover:bg-primary-400 text-white'
+              : 'green-btn text-white'
           }`}
         >
           {updatePreferences.isPending ? 'Saving...' : 'Save Changes'}

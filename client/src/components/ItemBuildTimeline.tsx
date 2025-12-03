@@ -42,6 +42,60 @@ export const ItemBuildTimeline: React.FC<ItemBuildTimelineProps> = ({
     .filter((e) => e.itemId && itemData[String(e.itemId)])
     .sort((a, b) => a.timestamp - b.timestamp);
 
+  // Only show "completed" final items (not intermediate components) or final boots
+  const displayedEvents = buildEvents.filter((e) => {
+    const idStr = String(e.itemId);
+    const itemObj = itemData[idStr] as Record<string, unknown> | undefined;
+    if (!itemObj) return false;
+
+    const from = itemObj.from as unknown;
+    const into = itemObj.into as unknown;
+    const tags = itemObj.tags as unknown;
+    const name = String(itemObj.name || '').toLowerCase();
+
+    // Completed/full item: it is built from components (has `from`) and is not further upgraded (no `into`)
+    const isBuiltFromComponents = Array.isArray(from) && (from as unknown[]).length > 0;
+    const isUpgradeable = Array.isArray(into) && (into as unknown[]).length > 0;
+    const isFinalBuiltItem = isBuiltFromComponents && !isUpgradeable;
+
+    // Boots: include any boot items (we'll dedupe later to keep the final boot)
+    const hasBootsTag = Array.isArray(tags) && (tags as unknown[]).includes('Boots');
+    const nameHasBoot = name.includes('boot');
+
+    return isFinalBuiltItem || hasBootsTag || nameHasBoot;
+  });
+
+  // Remove earlier component purchases if a later event upgrades them into a final item
+  const dedupedEvents = displayedEvents.filter((e, idx) => {
+    const thisIdStr = String(e.itemId);
+    // if any later displayed event has `from` containing this item's id, drop this one
+    const upgradedLater = displayedEvents.slice(idx + 1).some((later) => {
+      const laterItem = itemData[String(later.itemId)] as Record<string, unknown> | undefined;
+      if (!laterItem) return false;
+      const laterFrom = laterItem.from as unknown;
+      if (!Array.isArray(laterFrom)) return false;
+      // compare as strings
+      return (laterFrom as unknown[]).map(String).includes(thisIdStr);
+    });
+    return !upgradedLater;
+  });
+
+  // If multiple boot events remain, keep only the last boot purchase (by timestamp)
+  const isBootEvent = (ev: BuildEvent) => {
+    const obj = itemData[String(ev.itemId)] as Record<string, unknown> | undefined;
+    if (!obj) return false;
+    const tags = obj.tags as unknown;
+    const name = String(obj.name || '').toLowerCase();
+    return (Array.isArray(tags) && (tags as unknown[]).includes('Boots')) || name.includes('boot');
+  };
+
+  const bootEvents = dedupedEvents.filter(isBootEvent);
+  let finalEvents = dedupedEvents;
+  if (bootEvents.length > 1) {
+    const latestBootTs = Math.max(...bootEvents.map((b) => b.timestamp));
+    finalEvents = dedupedEvents.filter((ev) => (isBootEvent(ev) ? ev.timestamp === latestBootTs : true));
+  }
+
   function formatTime(ms: number) {
     const totalSeconds = Math.floor(ms / 1000);
     const min = Math.floor(totalSeconds / 60);
@@ -52,26 +106,33 @@ export const ItemBuildTimeline: React.FC<ItemBuildTimelineProps> = ({
   return (
     <div>
       <h3 className="text-lg font-bold mb-2">Item Build Timeline</h3>
-      <ul className="space-y-2">
-        {buildEvents.map((e, i) => {
-          const idStr = String(e.itemId);
-          const itemObj = itemData[idStr] as Record<string, unknown> | undefined;
-          const name = itemObj ? String(itemObj.name || '') : '';
-          return (
-            <li key={i} className="flex items-center gap-3">
-              <img
-                src={`https://ddragon.leagueoflegends.com/cdn/15.22.1/img/item/${e.itemId}.png`}
-                alt={name}
-                title={name}
-                className="w-8 h-8 border border-neutral-700 rounded bg-neutral-800"
-              />
-              <span className="font-semibold">{name}</span>
-              <span className="text-xs text-neutral-400 ml-2">{formatTime(e.timestamp)}</span>
-              <span className="text-xs ml-2">({e.type.replace('ITEM_', '').toLowerCase()})</span>
-            </li>
-          );
-        })}
-      </ul>
+      <div className="w-full">
+        <div className="relative w-full">
+          <div className="absolute left-0 right-0 top-10 h-px bg-neutral-700" />
+          <div className="flex flex-wrap items-start gap-6 px-2 py-3 justify-start">
+            {finalEvents.map((e, i) => {
+              const idStr = String(e.itemId);
+              const itemObj = itemData[idStr] as Record<string, unknown> | undefined;
+              const name = itemObj ? String(itemObj.name || '') : '';
+              const tags = itemObj?.tags as unknown;
+              const isBoot = Array.isArray(tags) && (tags as unknown[]).includes('Boots');
+
+              return (
+                <div key={i} className="flex flex-col items-center w-14 min-w-[56px]">
+                  <img
+                    src={`https://ddragon.leagueoflegends.com/cdn/15.22.1/img/item/${e.itemId}.png`}
+                    alt={name}
+                    title={name}
+                    className={`w-9 h-9 border rounded bg-neutral-800 ${isBoot ? 'border-yellow-500' : 'border-neutral-700'}`}
+                  />
+                  <div className="mt-2 text-xs text-neutral-400 text-center">{formatTime(e.timestamp)}</div>
+                  <div className="text-[10px] text-neutral-300 text-center truncate w-full">{name}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

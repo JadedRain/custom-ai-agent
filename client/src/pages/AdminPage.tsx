@@ -10,11 +10,11 @@ export default function AdminPage() {
 
   if (!auth.isAuthenticated) {
     return (
-      <div className="min-h-screen bg-primary-700 text-white p-8">
+      <div className="min-h-screen green-bg-medium text-white p-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-8">Admin</h1>
-          <div className="bg-primary-600/50 border border-primary-500 rounded p-6">
-            <p className="text-primary-50 text-lg">Please sign in to view this page.</p>
+          <div className="green-bg-light green-border border rounded p-6">
+            <p className="text-white text-lg">Please sign in to view this page.</p>
           </div>
         </div>
       </div>
@@ -23,11 +23,11 @@ export default function AdminPage() {
 
   if ((email || '').toLowerCase() !== 'loganfake@gmail.com') {
     return (
-      <div className="min-h-screen bg-primary-700 text-white p-8">
+      <div className="min-h-screen green-bg-medium text-white p-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-8">Admin</h1>
-          <div className="bg-primary-600/50 border border-primary-500 rounded p-6">
-            <p className="text-primary-50 text-lg">You are not authorized to view this page.</p>
+          <div className="green-bg-light green-border border rounded p-6">
+            <p className="text-white text-lg">You are not authorized to view this page.</p>
           </div>
         </div>
       </div>
@@ -35,9 +35,9 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen page-bg p-8">
+    <div className="min-h-screen green-bg-dark text-white p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Admin — Users</h1>
+        <h1 className="text-4xl font-bold mb-8 green-text-light">Admin — Users</h1>
 
         {isLoading && (
           <div className="text-center py-12">
@@ -46,7 +46,7 @@ export default function AdminPage() {
         )}
 
         {error && (
-          <div className="error-bg border rounded p-4 mb-6">
+          <div className="bg-red-900/20 border border-red-700 rounded p-4 mb-6">
             <p className="text-primary-50">Error: {error instanceof Error ? error.message : 'Failed to load users'}</p>
           </div>
         )}
@@ -54,7 +54,7 @@ export default function AdminPage() {
         {data && (
           <div className="space-y-4">
             {data.users.map((u: { user: User; preference: UserPreference | null }) => (
-              <div key={u.user.id} className="card-bg rounded p-4 flex justify-between items-center">
+              <div key={u.user.id} className="green-bg-medium green-border border rounded p-4 flex justify-between items-center">
                 <div>
                   <div className="font-medium text-white">{u.user.username || u.user.email || `User ${u.user.id}`}</div>
                   <div className="text-sm text-neutral-300">{u.user.email || 'No email'}</div>

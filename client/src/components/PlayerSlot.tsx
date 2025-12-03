@@ -16,23 +16,27 @@ interface PlayerSlotProps {
 }
 
 const PlayerSlot: React.FC<PlayerSlotProps> = ({ side, index, champ, isSelected = false, isNext = false, onClick }) => {
-  const selectedClass = isSelected ? 'ring-2 ring-primary-300' : '';
-  const nextClass = isNext ? 'ring-2 ring-primary-100/60' : '';
+  const baseClasses = 'w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer green-bg-medium border-2';
+  const selectedBorder = isSelected ? 'border-green-text shadow-lg' : isNext ? 'border-green-text-light' : 'green-border';
+  const hoverClasses = 'hover:green-bg-light hover:border-green-text-light';
 
   if (side === 'left') {
     return (
       <button
         onClick={onClick}
-        className={`w-full flex items-center gap-3 text-left p-2 rounded ${selectedClass} ${nextClass}`}
+        className={`${baseClasses} ${selectedBorder} ${hoverClasses} text-left`}
       >
-        <div className="w-14 h-14 rounded-full bg-neutral-800/30 border-2 border-neutral-700 overflow-hidden flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full green-bg-light border-2 green-border overflow-hidden flex items-center justify-center transition-colors hover:border-green-text">
           {champ?.imageUrl ? (
             <img src={champ.imageUrl} alt={champ.name} className="w-full h-full object-cover" />
           ) : (
-            <span className="text-neutral-400">+</span>
+            <span className="text-neutral-400 text-xl">+</span>
           )}
         </div>
-        <div className="text-neutral-300">{champ ? champ.name : `Player ${index + 1}`}</div>
+        <div className="flex-1">
+          <div className="text-sm text-neutral-400 text-xs">Player {index + 1}</div>
+          <div className="text-white font-medium">{champ ? champ.name : 'Empty'}</div>
+        </div>
       </button>
     );
   }
@@ -40,14 +44,17 @@ const PlayerSlot: React.FC<PlayerSlotProps> = ({ side, index, champ, isSelected 
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 justify-end p-2 rounded ${selectedClass} ${nextClass}`}
+      className={`${baseClasses} ${selectedBorder} ${hoverClasses} justify-end text-right`}
     >
-      <div className="text-neutral-300">{champ ? champ.name : `Player ${index + 1}`}</div>
-      <div className="w-14 h-14 rounded-full bg-neutral-800/30 border-2 border-neutral-700 overflow-hidden flex items-center justify-center">
+      <div className="flex-1">
+        <div className="text-sm text-neutral-400 text-xs">Player {index + 1}</div>
+        <div className="text-white font-medium">{champ ? champ.name : 'Empty'}</div>
+      </div>
+      <div className="w-12 h-12 rounded-full green-bg-light border-2 green-border overflow-hidden flex items-center justify-center transition-colors hover:border-green-text">
         {champ?.imageUrl ? (
           <img src={champ.imageUrl} alt={champ.name} className="w-full h-full object-cover" />
         ) : (
-          <span className="text-neutral-400">+</span>
+          <span className="text-neutral-400 text-xl">+</span>
         )}
       </div>
     </button>

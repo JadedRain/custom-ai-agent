@@ -1,3 +1,5 @@
+import { DDRAGON_VERSION } from '../config/constants';
+
 export const PICK_ORDER = [
   { side: 'left', index: 0 },
   { side: 'right', index: 0 },
@@ -11,5 +13,5 @@ export const PICK_ORDER = [
   { side: 'right', index: 4 },
 ] as const;
 
-export const CDN_BASE = 'https://ddragon.leagueoflegends.com/cdn/15.22.1/img/champion/';
+export const CDN_BASE = `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/`;
 export const STORAGE_KEY = 'draft_planner_state_simple_v1';

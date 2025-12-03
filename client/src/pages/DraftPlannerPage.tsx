@@ -13,11 +13,11 @@ export default function DraftPlannerPage() {
 
   if (!auth.isAuthenticated) {
     return (
-      <div className="min-h-screen bg-primary-700 text-white p-8">
+      <div className="min-h-screen green-bg-medium text-white p-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-8">Draft Planner</h1>
-          <div className="bg-primary-600/50 border border-primary-500 rounded p-6">
-            <p className="text-primary-50 text-lg mb-4">Please sign in to view and use the Draft Planner.</p>
+          <div className="green-bg-light green-border border rounded p-6">
+            <p className="text-white text-lg mb-4">Please sign in to view and use the Draft Planner.</p>
             <AuthButton />
           </div>
         </div>
@@ -60,7 +60,7 @@ function DraftPlannerPageInner() {
   }, [selectedSlot, leftSlots, rightSlots, champions]);
 
   return (
-    <div className="min-h-screen page-bg pt-20 p-6">
+    <div className="min-h-screen green-bg-dark text-white pt-20 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-12 gap-6 mb-4 items-center">
           <div className="col-span-2" />
@@ -68,9 +68,12 @@ function DraftPlannerPageInner() {
           <div className="col-span-3 flex justify-end">
             <button
               onClick={() => clearDraft()}
-              className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded text-sm"
+              className="px-3 py-1.5 text-white rounded text-sm transition-colors"
+              style={{ backgroundColor: '#3d6b57' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5ecc8f'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3d6b57'}
             >
-              Clear Draft
+              Clear
             </button>
           </div>
         </div>

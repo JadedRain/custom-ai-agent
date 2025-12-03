@@ -19,6 +19,9 @@ keycloak_openid = KeycloakOpenID(
 PUBLIC_ROUTES = [
     '/api/champions',
     '/api/champion-winrate',
+    '/api/ai',
+    '/api/ai/chat',
+    '/api/generate-best-item',
 ]
 
 

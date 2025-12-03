@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Champion as ChampionType } from '../components/ChampionList';
 import { PICK_ORDER, CDN_BASE, STORAGE_KEY } from '../lib/draftConstants';
+import { API_BASE_URL } from '../api/client';
 import { DraftPlannerContext } from './draftPlannerCore';
 import type { ContextValue, SlotSide } from './draftPlannerCore';
 
@@ -29,8 +30,7 @@ export const DraftPlannerProvider: React.FC<React.PropsWithChildren<object>> = (
       setLoading(true);
       setError(null);
       try {
-        const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const res = await fetch(`${API_BASE}/api/champions`);
+        const res = await fetch(`${API_BASE_URL}/api/champions`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         const data: Record<string, ChampionRaw> = json?.data || {};

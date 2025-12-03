@@ -18,7 +18,22 @@ def get_summoner_by_riot_id(game_name, tag_line):
     params = {'api_key': RIOT_API_KEY}
     response = requests.get(url, headers=get_riot_headers(), params=params)
     if response.status_code == 200:
-        return response.json()
+        account_data = response.json()
+        puuid = account_data.get('puuid')
+        
+        if puuid:
+            summoner_url = (
+                f'{NA_PLATFORM}/lol/summoner/v4/summoners/by-puuid/{puuid}'
+            )
+            summoner_response = requests.get(
+                summoner_url, headers=get_riot_headers(), params=params
+            )
+            if summoner_response.status_code == 200:
+                summoner_data = summoner_response.json()
+                account_data['profileIconId'] = summoner_data.get('profileIconId')
+                account_data['summonerLevel'] = summoner_data.get('summonerLevel')
+        
+        return account_data
     else:
         return None
 

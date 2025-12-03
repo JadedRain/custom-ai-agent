@@ -24,17 +24,20 @@ const ChampionList: React.FC<Props> = ({ champions, loading, error, onChampionCl
   }, [champions, searchTerm]);
 
   return (
-    <div className="w-full max-w-[640px] aspect-square bg-neutral-900/40 rounded-lg border border-neutral-700 p-4 overflow-auto pb-8">
+    <div className="w-full max-w-[640px] aspect-square green-bg-medium rounded-lg border green-border p-4 overflow-auto pb-8">
       <div className="mb-4 flex justify-end">
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search champions"
-          className="px-3 py-1.5 bg-neutral-800/20 text-neutral-200 rounded border border-neutral-700 focus:outline-none focus:border-primary-300 text-sm"
+          className="px-3 py-1.5 green-bg-light text-white rounded border green-border focus:outline-none focus:ring-1 text-sm"
+          style={{ backgroundColor: '#1a2f27', borderColor: '#3d6b57' }}
+          onFocus={(e) => e.currentTarget.style.borderColor = '#5ecc8f'}
+          onBlur={(e) => e.currentTarget.style.borderColor = '#3d6b57'}
         />
       </div>
-      {loading && <div className="text-neutral-200">Loading champions...</div>}
+      {loading && <div className="text-white">Loading champions...</div>}
       {error && <div className="text-red-400">Error: {error}</div>}
 
       {!loading && !error && (
@@ -48,14 +51,14 @@ const ChampionList: React.FC<Props> = ({ champions, loading, error, onChampionCl
                 onClick={() => onChampionClick(c.id)}
                 className="flex flex-col items-center gap-2 cursor-pointer hover:scale-105 transform transition overflow-visible"
               >
-                <div className="w-20 h-20 bg-neutral-800/40 rounded-sm overflow-hidden border border-neutral-700 flex items-center justify-center">
+                <div className="w-20 h-20 green-bg-light rounded-sm overflow-hidden border green-border flex items-center justify-center hover:border-green-text transition-colors">
                   {c.imageUrl ? (
                     <img src={c.imageUrl} alt={c.name} className="w-full h-full object-contain" />
                   ) : (
                     <div className="text-neutral-400">{c.name}</div>
                   )}
                 </div>
-                <div className="text-sm text-neutral-200 truncate text-center w-20">{c.name}</div>
+                <div className="text-sm text-white truncate text-center w-20">{c.name}</div>
               </div>
             ))}
           </div>

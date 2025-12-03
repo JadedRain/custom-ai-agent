@@ -13,15 +13,16 @@ import MatchPage from './pages/MatchPage';
 import { GameDataProvider } from './context/GameDataProvider';
 import ChampionsPage from './pages/ChampionsPage';
 import ChampionDetailPage from './pages/ChampionDetailPage';
+import ProPlayersPage from './pages/ProPlayersPage';
 
 function HomePage() {
   const auth = useAuth();
   return (
-    <div className="card">
+    <div className="min-h-screen green-bg-dark flex items-center justify-center p-8">
       {!auth.isAuthenticated ? (
         <AuthButton />
       ) : (
-        <div className="flex flex-col gap-2 items-center">
+        <div className="flex flex-col gap-2 items-center w-full">
           <div className="scale-125 w-full max-w-xl">
             <SearchBar />
           </div>
@@ -50,6 +51,7 @@ function App() {
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/champions" element={<ChampionsPage />} />
             <Route path="/champion/:id" element={<ChampionDetailPage />} />
+            <Route path="/pro-players" element={<ProPlayersPage />} />
             <Route path="/draft-planner" element={<DraftPlannerPage />} />
           </Routes>
         </BrowserRouter>

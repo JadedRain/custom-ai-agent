@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { GameDataContext } from './GameDataContext';
 
 
-const VERSION = '15.22.1';
+const VERSION = '15.24';
 const ITEM_URL = `https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/en_US/item.json`;
 
 export const GameDataProvider = ({ children }: { children: ReactNode }) => {

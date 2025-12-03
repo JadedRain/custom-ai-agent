@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request, g
+import os
+import requests
 from flask_cors import CORS
 from dotenv import load_dotenv
 from riot_api import (
@@ -190,6 +192,8 @@ def generate_best_item():
 @app.route('/api/ai/chat', methods=['POST'])
 def ai_chat():
     payload = request.get_json() or {}
+    # Enforce fixed model
+    payload['model'] = 'gpt-oss-120b'
     model = payload.get('model')
     messages = payload.get('messages', [])
     tools = payload.get('tools', [])
@@ -248,22 +252,32 @@ def ai_chat():
             responses.append({'name': name, 'error': f'Execution error: {str(e)}'})
 
     # Return a chat-like structure that an LLM orchestrator could consume
-    return jsonify({
-        'id': None,
-        'object': 'chat.completion',
-        'model': model,
-        'messages': messages,
-        'tool_responses': responses,
-        'choices': [
-            {
-                'message': {
-                    'role': 'assistant',
-                    'content': None,
-                },
-                'finish_reason': 'tools_executed',
-            }
-        ],
-    })
+    # Forward the (modified) payload to the external LLM endpoint and include tool responses
+    external_url = os.getenv(
+        'AI_SNOW_URL',
+        'http://ai-snow.reindeer-pinecone.ts.net:9292/v1/chat/completions',
+    )
+    try:
+        resp = requests.post(external_url, json=payload, timeout=30)
+        try:
+            external_json = resp.json()
+        except Exception:
+            external_json = {'raw_text': resp.text}
+
+        if isinstance(external_json, dict):
+            external_json['tool_responses'] = responses
+            return jsonify(external_json), resp.status_code
+        else:
+            return (
+                jsonify({'external': external_json, 'tool_responses': responses}),
+                resp.status_code,
+            )
+    except requests.RequestException as e:
+        return jsonify({
+            'error': 'Failed to contact external LLM',
+            'detail': str(e),
+            'tool_responses': responses,
+        }), 502
 
 
 @app.route('/api/champions', methods=['GET'])

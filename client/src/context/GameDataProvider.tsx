@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { GameDataContext } from './GameDataContext';
+import { DDRAGON_VERSION } from '../config/constants';
 
-const VERSION = '15.22.1';
+const VERSION = DDRAGON_VERSION;
 const ITEM_URL = `https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/en_US/item.json`;
 
 export const GameDataProvider = ({ children }: { children: ReactNode }) => {

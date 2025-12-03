@@ -1,5 +1,6 @@
 // Fetch match details by matchId
 import type { Match } from './client';
+import { API_BASE_URL } from './client';
 
 export const useMatchDetails = (matchId: string) => {
   const auth = useAuth();
@@ -7,10 +8,7 @@ export const useMatchDetails = (matchId: string) => {
     queryKey: ['matchDetails', matchId],
     queryFn: async () => {
       if (!matchId) return undefined;
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/match/${matchId}`,
-        { headers: auth.user?.access_token ? { Authorization: `Bearer ${auth.user.access_token}` } : {} }
-      );
+      const response = await fetch(`${API_BASE_URL}/api/match/${matchId}`, { headers: auth.user?.access_token ? { Authorization: `Bearer ${auth.user.access_token}` } : {} });
       if (!response.ok) throw new Error('Failed to fetch match details');
       return response.json();
     },
@@ -39,7 +37,7 @@ export const useAllChampions = () => {
   return useQuery<{ byId: Record<string, DDragonChampion>; list: Array<DDragonChampion & { imageUrl?: string }> }>({
     queryKey: ['champions'],
     queryFn: async () => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/champions`);
+      const response = await fetch(`${API_BASE_URL}/api/champions`);
       if (!response.ok) throw new Error('Failed to fetch champions');
       const json = await response.json();
       const data: Record<string, DDragonChampion> = json.data || {};
@@ -106,10 +104,7 @@ export const useAdminUsers = () => {
     queryKey: ['adminUsers'],
     queryFn: async () => {
       if (!auth.user?.access_token) throw new Error('Not authenticated');
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/users`,
-        { headers: auth.user?.access_token ? { Authorization: `Bearer ${auth.user.access_token}` } : {} }
-      );
+      const response = await fetch(`${API_BASE_URL}/api/admin/users`, { headers: auth.user?.access_token ? { Authorization: `Bearer ${auth.user.access_token}` } : {} });
       if (!response.ok) throw new Error('Failed to fetch admin users');
       return response.json();
     },

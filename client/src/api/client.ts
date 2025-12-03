@@ -1,9 +1,14 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const RAW_API_URL = import.meta.env.VITE_API_URL;
+// If the env points to the Docker service hostname like "http://api:5000", browsers can't resolve that
+// from the host. Prefer a relative path in that case so the frontend talks to the same origin: `/api/...`.
+export const API_BASE_URL = RAW_API_URL && RAW_API_URL.includes('://api') ? '' : (RAW_API_URL || '');
 
 export interface Summoner {
   puuid: string;
   gameName: string;
   tagLine: string;
+  profileIconId?: number;
+  summonerLevel?: number;
 }
 
 export interface MatchParticipant {
@@ -14,6 +19,12 @@ export interface MatchParticipant {
   kills?: number;
   deaths?: number;
   assists?: number;
+  totalMinionsKilled?: number;
+  neutralMinionsKilled?: number;
+  visionScore?: number;
+  teamId?: number;
+  riotIdGameName?: string;
+  summonerName?: string;
   [key: string]: unknown;
 }
 
@@ -32,6 +43,7 @@ export interface MatchMetadata {
 export interface Match {
   metadata: MatchMetadata;
   info: MatchInfo;
+  [key: string]: unknown;
 }
 
 export interface MatchHistoryResponse {
@@ -139,6 +151,25 @@ export const apiClient = {
     if (!response.ok) {
       throw new Error('Failed to fetch admin users');
     }
+    return response.json();
+  },
+  generateBestItems: async (calls: Array<{ name: string; parameters: Record<string, unknown> }>, token?: string) => {
+    const payload = {
+      messages: [{ role: 'user', content: 'Requesting best-item tool calls' }],
+      tool_calls: calls,
+    };
+
+    const response = await fetch(`${API_BASE_URL}/api/ai/chat`, {
+      method: 'POST',
+      headers: createHeaders(token),
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const txt = await response.text();
+      throw new Error(`AI request failed: ${response.status} ${txt}`);
+    }
+
     return response.json();
   },
 };

@@ -10,9 +10,9 @@ export default function ChampionsPage() {
   const champions = data ? data.list.map((c: DDragonChampion & { imageUrl?: string }) => ({ id: c.id, name: c.name, key: c.key, imageUrl: c.imageUrl })) : [];
 
   return (
-    <div className="min-h-screen page-bg p-8">
+    <div className="min-h-screen green-bg-dark text-white p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Champions</h1>
+        <h1 className="text-4xl font-bold mb-8 green-text-light">Champions</h1>
 
         <div className="flex justify-center">
           <ChampionList

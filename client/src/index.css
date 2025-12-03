@@ -1,8 +1,43 @@
 @import "tailwindcss";
 
 body {
-  background-color: hsl(159, 56%, 7%);
-  color: white;
+  background-color: #0d1f1a;
+  color: #f5f5f5;
+}
+
+.green-bg-dark { background-color: #0d1f1a; }
+.green-bg-medium { background-color: #1a2f27; }
+.green-bg-light { background-color: #2a4a3d; }
+.green-border { border-color: #3d6b57; }
+.green-text { color: #5ecc8f; }
+.green-text-light { color: #8ee4b3; }
+.green-btn { background-color: #3d8b64; }
+.green-btn:hover { background-color: #4fa876; }
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a2f27;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3d6b57;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5ecc8f;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3d6b57 #1a2f27;
 }
 
 button:hover {
@@ -12,13 +47,3 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #ffffff;
-    background-color: hsl(155, 43%, 18%);
-  }
-  a:hover {
-    color: hsl(141, 45%, 81%);
-  }
-} 
