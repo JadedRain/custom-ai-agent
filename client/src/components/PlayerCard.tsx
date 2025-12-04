@@ -43,7 +43,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ p, itemData, onSelect })
 
   const trinketRaw = p['item6'] as unknown;
   const trinketId = Number(trinketRaw as number) || 0;
-  let trinket = null as any;
+  let trinket: { id: number; name: string; img: string; loaded: boolean } | null = null;
   if (trinketId && trinketId !== 0) {
     let name = '';
     let img = ITEM_URL + 'empty.png';
