@@ -6,6 +6,8 @@ import { useDraftPlanner } from '../context/draftPlannerCore';
 import { PICK_ORDER } from '../lib/draftConstants';
 import { useAuth } from 'react-oidc-context';
 import { AuthButton } from '../components/AuthButton';
+import { DraftAiChat } from '../components/DraftAiChat';
+import { useGameData } from '../context/gameDataHelpers';
 
 
 export default function DraftPlannerPage() {
@@ -47,6 +49,8 @@ function DraftPlannerPageInner() {
     handleChampionClick,
     clearDraft,
   } = useDraftPlanner();
+  
+  const { itemData } = useGameData();
 
   function getChampionById(id?: string | null) {
     if (!id) return undefined;
@@ -58,6 +62,16 @@ function DraftPlannerPageInner() {
     const id = selectedSlot.side === 'left' ? leftSlots[selectedSlot.index] : rightSlots[selectedSlot.index];
     return champions.find((c) => c.id === id);
   }, [selectedSlot, leftSlots, rightSlots, champions]);
+
+  const leftTeam = leftSlots.map((champId, i) => {
+    const champ = getChampionById(champId) ?? leftAssignedData[i];
+    return { id: champId || undefined, name: champ?.name };
+  });
+
+  const rightTeam = rightSlots.map((champId, i) => {
+    const champ = getChampionById(champId) ?? rightAssignedData[i];
+    return { id: champId || undefined, name: champ?.name };
+  });
 
   return (
     <div className="min-h-screen green-bg-dark text-white pt-20 p-6">
@@ -138,6 +152,15 @@ function DraftPlannerPageInner() {
             <div className="text-neutral-200 text-lg font-medium">{selectedAssignedChampion.name}</div>
           </div>
         )}
+
+        <div className="mt-6 h-64 max-w-4xl mx-auto">
+          <DraftAiChat 
+            leftTeam={leftTeam} 
+            rightTeam={rightTeam} 
+            itemData={itemData}
+            userSide={selectedSlot?.side}
+          />
+        </div>
       </div>
     </div>
   );

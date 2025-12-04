@@ -90,7 +90,7 @@ const createHeaders = (token?: string): HeadersInit => {
 export const apiClient = {
   getSummoner: async (gameName: string, tagLine: string, token?: string): Promise<Summoner> => {
     const response = await fetch(
-      `${API_BASE_URL}/api/summoner/${gameName}/${tagLine}`,
+      `${API_BASE_URL}/api/summoner/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`,
       {
         headers: createHeaders(token),
       }
@@ -103,7 +103,7 @@ export const apiClient = {
 
   getPlayerMatchHistory: async (gameName: string, tagLine: string, count = 10, token?: string): Promise<MatchHistoryResponse> => {
     const response = await fetch(
-      `${API_BASE_URL}/api/player-match-history/${gameName}/${tagLine}?count=${count}`,
+      `${API_BASE_URL}/api/player-match-history/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}?count=${count}`,
       {
         headers: createHeaders(token),
       }

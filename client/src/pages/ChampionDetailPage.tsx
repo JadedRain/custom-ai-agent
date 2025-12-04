@@ -92,11 +92,6 @@ export default function ChampionDetailPage() {
             ))}
           </div>
         </section>
-
-        <div className="mt-6 flex items-center gap-4">
-          <button className="px-4 py-2 rounded green-btn text-white shadow-md transition-colors">Open AI Tool Page</button>
-          <Link to="/champions" className="green-text hover:green-text-light transition-colors">Back to champions</Link>
-        </div>
       </div>
     </div>
   );

@@ -263,18 +263,21 @@ Features:
 #### Estimates:
 
 Rubric items:
-- item 1 with description
-- item 2 with description
+- Finished
 
 Features:
-- feature 4 with description
-- feature 5 with description
+
 
 #### Delivered
-
-Rubric Items:
-
+Rubric items:
+- 10+ pages
+- 4+ autonomous functions
 
 Features:
+- Build recommender for each game
+- Champ select build recommender
+- More fleshed out styling
+- Information about application
+
 
 ### Dec 6

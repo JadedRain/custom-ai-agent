@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import { PlayerMatchList } from '../components/PlayerMatchList';
 import { useGameData } from '../context/gameDataHelpers';
 import { DDRAGON_VERSION } from '../config/constants';
+import { useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
 
 
 
@@ -13,13 +15,18 @@ function PlayerPageInner() {
   const auth = useAuth();
   const { gameName = '', tagLine = '' } = useParams();
   const { itemLoading, itemError } = useGameData();
+  const [matchCount, setMatchCount] = useState(10);
 
   const { data: summoner, isLoading, error } = useSummoner(gameName, tagLine);
   const {
     data: matchHistoryData,
     isLoading: isMatchesLoading,
     error: matchesError,
-  } = usePlayerMatchHistory(gameName, tagLine, 10);
+  } = usePlayerMatchHistory(gameName, tagLine, matchCount);
+
+  const loadMoreMatches = () => {
+    setMatchCount(prev => prev + 20);
+  };
 
   if (!auth.isAuthenticated) {
     return (
@@ -39,8 +46,9 @@ function PlayerPageInner() {
   if (itemLoading) {
     return (
       <div className="min-h-screen green-bg-medium text-white p-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8">Loading game data...</h1>
+        <div className="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[60vh]">
+          <FaSpinner className="text-6xl green-text animate-spin mb-4" />
+          <h1 className="text-2xl font-bold">Loading game data...</h1>
         </div>
       </div>
     );
@@ -64,7 +72,8 @@ function PlayerPageInner() {
       <div className="max-w-4xl mx-auto">
 
         {isLoading && (
-          <div className="text-center py-12">
+          <div className="text-center py-12 flex flex-col items-center">
+            <FaSpinner className="text-5xl green-text animate-spin mb-4" />
             <p className="text-xl">Loading player data...</p>
           </div>
         )}
@@ -106,11 +115,28 @@ function PlayerPageInner() {
           <div className="mt-6 green-bg-medium green-border border rounded-lg p-6">
             <h3 className="text-xl font-semibold mb-4 green-text-light">Recent Matches</h3>
             <PlayerMatchList matches={matchHistoryData.matches} summonerPuuid={summoner.puuid} />
+            
+            {matchHistoryData.matches.length >= matchCount && (
+              <div className="mt-6 flex justify-center">
+                <button
+                  onClick={loadMoreMatches}
+                  disabled={isMatchesLoading}
+                  className="px-6 py-3 rounded text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  style={{ backgroundColor: '#3d8b64' }}
+                  onMouseEnter={(e) => !isMatchesLoading && (e.currentTarget.style.backgroundColor = '#4fa876')}
+                  onMouseLeave={(e) => !isMatchesLoading && (e.currentTarget.style.backgroundColor = '#3d8b64')}
+                >
+                  {isMatchesLoading && <FaSpinner className="animate-spin" />}
+                  {isMatchesLoading ? 'Loading...' : 'Load More Matches'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
-        {isMatchesLoading && (
-          <div className="text-center py-6">
+        {isMatchesLoading && !matchHistoryData && (
+          <div className="text-center py-6 flex flex-col items-center">
+            <FaSpinner className="text-4xl green-text animate-spin mb-3" />
             <p className="text-lg text-white">Loading match history...</p>
           </div>
         )}

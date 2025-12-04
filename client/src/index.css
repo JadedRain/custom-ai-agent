@@ -40,6 +40,76 @@ body {
   scrollbar-color: #3d6b57 #1a2f27;
 }
 
+/* Markdown content styling */
+.markdown-content {
+  color: inherit;
+}
+
+.markdown-content p {
+  margin: 0.5em 0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.markdown-content li {
+  margin: 0.25em 0;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+  font-weight: 600;
+  margin-top: 0.75em;
+  margin-bottom: 0.5em;
+}
+
+.markdown-content h1 { font-size: 1.1em; }
+.markdown-content h2 { font-size: 1.05em; }
+.markdown-content h3 { font-size: 1em; }
+.markdown-content h4 { font-size: 0.95em; }
+
+.markdown-content strong {
+  font-weight: 600;
+  color: #8ee4b3;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+.markdown-content code {
+  background-color: rgba(61, 107, 87, 0.3);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.markdown-content pre {
+  background-color: rgba(13, 31, 26, 0.5);
+  padding: 0.5em;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.markdown-content blockquote {
+  border-left: 3px solid #3d6b57;
+  padding-left: 0.75em;
+  margin: 0.5em 0;
+  color: #b0b0b0;
+}
+
 button:hover {
   border-color: #646cff;
 }

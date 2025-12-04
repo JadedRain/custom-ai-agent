@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request, g
-import os
 import requests
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -192,11 +191,7 @@ def generate_best_item():
 @app.route('/api/ai/chat', methods=['POST'])
 def ai_chat():
     payload = request.get_json() or {}
-    # Enforce fixed model
     payload['model'] = 'gpt-oss-120b'
-    model = payload.get('model')
-    messages = payload.get('messages', [])
-    tools = payload.get('tools', [])
     tool_calls = payload.get('tool_calls') or payload.get('calls') or []
 
     TOOL_FUNCTIONS = {
@@ -207,56 +202,32 @@ def ai_chat():
         'get_cached_item_data': get_cached_item_data,
     }
 
-    # If no explicit calls provided, return available tools and their basic
-    # info (from the provided `tools` schema when present).
-    if not tool_calls:
-        available = []
-        for name, fn in TOOL_FUNCTIONS.items():
-            # Use any provided schema info from `tools` array if present
-            schema = None
-            for t in tools:
-                func = t.get('function') if isinstance(t, dict) else None
-                if func and func.get('name') == name:
-                    schema = func
-                    break
-            available.append({'name': name, 'has_schema': bool(schema), 'schema': schema})
-
-        return jsonify({
-            'model': model,
-            'available_tools': available,
-            'message_count': len(messages),
-        })
-
+    # Process tool calls if provided
     responses = []
-    for call in tool_calls:
-        name = call.get('name')
-        params = call.get('parameters', {}) or {}
-        fn = TOOL_FUNCTIONS.get(name)
-        if not fn:
-            responses.append({'name': name, 'error': f'Unknown tool: {name}'})
-            continue
+    if tool_calls:
+        for call in tool_calls:
+            name = call.get('name')
+            params = call.get('parameters', {}) or {}
+            fn = TOOL_FUNCTIONS.get(name)
+            if not fn:
+                responses.append({'name': name, 'error': f'Unknown tool: {name}'})
+                continue
 
-        try:
-            # Call the tool. Allow both keyword and positional styles; most tools
-            # accept keywords.
-            if isinstance(params, dict):
-                result = fn(**params)
-            else:
-                # If parameters are a list/tuple, pass as positional
-                result = fn(*params)
+            try:
+                if isinstance(params, dict):
+                    result = fn(**params)
+                else:
+                    result = fn(*params)
 
-            responses.append({'name': name, 'result': result})
-        except TypeError as te:
-            responses.append({'name': name, 'error': f'Parameter mismatch: {str(te)}'})
-        except Exception as e:
-            responses.append({'name': name, 'error': f'Execution error: {str(e)}'})
+                responses.append({'name': name, 'result': result})
+            except TypeError as te:
+                responses.append({'name': name, 'error': f'Parameter mismatch: {str(te)}'})
+            except Exception as e:
+                responses.append({'name': name, 'error': f'Execution error: {str(e)}'})
 
-    # Return a chat-like structure that an LLM orchestrator could consume
-    # Forward the (modified) payload to the external LLM endpoint and include tool responses
-    external_url = os.getenv(
-        'AI_SNOW_URL',
-        'http://ai-snow.reindeer-pinecone.ts.net:9292/v1/chat/completions',
-    )
+    # Forward to the external LLM endpoint
+    external_url = 'http://ai-snow.reindeer-pinecone.ts.net:9292/v1/chat/completions'
+ 
     try:
         resp = requests.post(external_url, json=payload, timeout=30)
         try:
@@ -265,7 +236,8 @@ def ai_chat():
             external_json = {'raw_text': resp.text}
 
         if isinstance(external_json, dict):
-            external_json['tool_responses'] = responses
+            if responses:
+                external_json['tool_responses'] = responses
             return jsonify(external_json), resp.status_code
         else:
             return (
@@ -274,10 +246,20 @@ def ai_chat():
             )
     except requests.RequestException as e:
         return jsonify({
+            'choices': [{
+                'message': {
+                    'role': 'assistant',
+                    'content': (
+                        'Unable to connect to AI service. '
+                        'The service may be offline or unreachable. '
+                        f'Error: {str(e)}'
+                    )
+                }
+            }],
             'error': 'Failed to contact external LLM',
             'detail': str(e),
             'tool_responses': responses,
-        }), 502
+        }), 200
 
 
 @app.route('/api/champions', methods=['GET'])
@@ -319,9 +301,6 @@ def admin_list_users():
 
 @app.route('/api/champion-winrate/<champion_id>', methods=['GET'])
 def champion_winrate(champion_id):
-    # Two modes:
-    # 1) Client supplies comma-separated `puuids` query param
-    # 2) Client supplies `region` (e.g. NA) and optional `tier`/`division` to auto-select players
     puuids_raw = request.args.get('puuids')
     per_player = request.args.get('count', 20, type=int)
     max_total = request.args.get('max', 200, type=int)
@@ -342,7 +321,6 @@ def champion_winrate(champion_id):
         except Exception as e:
             return jsonify({'error': 'Failed to compute winrate', 'detail': str(e)}), 500
 
-    # If no puuids provided, try region/tier-based sampling
     region = request.args.get('region')
     if not region:
         return (
