@@ -4,8 +4,9 @@ import { useParams } from 'react-router-dom';
 import { PlayerMatchList } from '../components/PlayerMatchList';
 import { useGameData } from '../context/gameDataHelpers';
 import { DDRAGON_VERSION } from '../config/constants';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaSpinner } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 
 
@@ -23,6 +24,25 @@ function PlayerPageInner() {
     isLoading: isMatchesLoading,
     error: matchesError,
   } = usePlayerMatchHistory(gameName, tagLine, matchCount);
+
+  // Show toast on error
+  useEffect(() => {
+    if (error) {
+      toast.error(`Failed to load player: ${error instanceof Error ? error.message : 'Unknown error'}`, {
+        duration: 4000,
+        position: 'top-right',
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (matchesError) {
+      toast.error(`Failed to load matches: ${matchesError instanceof Error ? matchesError.message : 'Unknown error'}`, {
+        duration: 4000,
+        position: 'top-right',
+      });
+    }
+  }, [matchesError]);
 
   const loadMoreMatches = () => {
     setMatchCount(prev => prev + 20);

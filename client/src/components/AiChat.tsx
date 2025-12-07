@@ -261,7 +261,7 @@ Response Style:
                 <div className="bg-neutral-700/50 rounded-lg p-3 md:p-4">
                   <p className="text-sm md:text-base text-neutral-300">
                     {currentModel === 'gemma3-27b' 
-                      ? 'Analyzing image... (this may take up to 2 minutes)' 
+                      ? 'Analyzing image... (this may take up to 3 minutes)' 
                       : 'Thinking...'}
                   </p>
                 </div>

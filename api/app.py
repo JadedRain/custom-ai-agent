@@ -233,10 +233,33 @@ def ai_chat():
     # Forward to the external LLM endpoint
     external_url = 'http://ai-snow.reindeer-pinecone.ts.net:9292/v1/chat/completions'
 
-    timeout = 180 if payload.get('model') == 'gemma3-27b' else 30
+    # Check if request contains images (vision request) - needs longer timeout
+    has_image = False
+    if 'messages' in payload:
+        for msg in payload.get('messages', []):
+            if isinstance(msg.get('content'), list):
+                for content_item in msg['content']:
+                    if isinstance(content_item, dict) and content_item.get('type') == 'image_url':
+                        has_image = True
+                        break
+            if has_image:
+                break
+
+    # Vision requests need more time for image processing
+    if has_image:
+        timeout = 300  # 5 minutes for vision requests
+        print(f"[AI Chat] Vision request detected, using {timeout}s timeout")
+    elif payload.get('model') == 'gemma3-27b':
+        timeout = 90
+        print(f"[AI Chat] Using gemma3-27b with {timeout}s timeout")
+    else:
+        timeout = 30
+        print(f"[AI Chat] Standard request with {timeout}s timeout")
 
     try:
+        print(f"[AI Chat] Sending request to {external_url}")
         resp = requests.post(external_url, json=payload, timeout=timeout)
+        print(f"[AI Chat] Received response with status {resp.status_code}")
         try:
             external_json = resp.json()
         except Exception:
@@ -251,6 +274,38 @@ def ai_chat():
                 jsonify({'external': external_json, 'tool_responses': responses}),
                 resp.status_code,
             )
+    except requests.Timeout:
+        print(f"[AI Chat] Request timeout after {timeout} seconds")
+        return jsonify({
+            'choices': [{
+                'message': {
+                    'role': 'assistant',
+                    'content': (
+                        'The AI service is taking too long to respond. '
+                        'Please try again with a shorter message or simpler request.'
+                    )
+                }
+            }],
+            'error': 'Request timeout',
+            'detail': f'Request exceeded {timeout} second timeout',
+            'tool_responses': responses,
+        }), 200
+    except requests.ConnectionError as e:
+        print(f"[AI Chat] Connection error: {str(e)}")
+        return jsonify({
+            'choices': [{
+                'message': {
+                    'role': 'assistant',
+                    'content': (
+                        'Unable to connect to AI service. '
+                        'The service appears to be offline. Please try again later.'
+                    )
+                }
+            }],
+            'error': 'Connection failed',
+            'detail': 'Could not reach AI service endpoint',
+            'tool_responses': responses,
+        }), 200
     except requests.RequestException as e:
         return jsonify({
             'choices': [{

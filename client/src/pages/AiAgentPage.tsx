@@ -25,10 +25,6 @@ const AiAgentPage: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold green-text-light mb-2">AI Agent</h1>
-          <p className="text-neutral-300">
-            Get intelligent advice about League of Legends strategies, builds, and gameplay. 
-            Upload screenshots for AI vision analysis (uses gemma3-27b model for images).
-          </p>
         </div>
         
         <div className="h-[calc(100vh-250px)]">

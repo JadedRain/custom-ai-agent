@@ -60,6 +60,7 @@ export const useSummoner = (gameName: string, tagLine: string) => {
     queryKey: ['summoner', gameName, tagLine],
     queryFn: () => apiClient.getSummoner(gameName, tagLine, auth.user?.access_token),
     enabled: !!gameName && !!tagLine && !!auth.user?.access_token,
+    retry: 1,
   });
 };
 
@@ -70,6 +71,7 @@ export const usePlayerMatchHistory = (gameName: string, tagLine: string, count =
     queryKey: ['matchHistory', gameName, tagLine, count],
     queryFn: () => apiClient.getPlayerMatchHistory(gameName, tagLine, count, auth.user?.access_token),
     enabled: !!gameName && !!tagLine && !!auth.user?.access_token,
+    retry: 1,
   });
 };
 
