@@ -21,6 +21,8 @@ from ai_chat_tools import (
     get_champion_data,
     get_item_data,
     generate_best_item_tool,
+    get_champion_details,
+    get_matchup_analysis,
 )
 
 load_dotenv()
@@ -191,7 +193,8 @@ def generate_best_item():
 @app.route('/api/ai/chat', methods=['POST'])
 def ai_chat():
     payload = request.get_json() or {}
-    payload['model'] = 'gpt-oss-120b'
+    if 'model' not in payload:
+        payload['model'] = 'gpt-oss-120b'
     tool_calls = payload.get('tool_calls') or payload.get('calls') or []
 
     TOOL_FUNCTIONS = {
@@ -200,6 +203,8 @@ def ai_chat():
         'get_cached_champion_data': get_cached_champion_data,
         'get_item_data': get_item_data,
         'get_cached_item_data': get_cached_item_data,
+        'get_champion_details': get_champion_details,
+        'get_matchup_analysis': get_matchup_analysis,
     }
 
     # Process tool calls if provided
@@ -227,9 +232,11 @@ def ai_chat():
 
     # Forward to the external LLM endpoint
     external_url = 'http://ai-snow.reindeer-pinecone.ts.net:9292/v1/chat/completions'
- 
+
+    timeout = 180 if payload.get('model') == 'gemma3-27b' else 30
+
     try:
-        resp = requests.post(external_url, json=payload, timeout=30)
+        resp = requests.post(external_url, json=payload, timeout=timeout)
         try:
             external_json = resp.json()
         except Exception:

@@ -310,3 +310,86 @@ def generate_best_item_tool(
         'all_items': all_items,
         'item_details': item_details,
     }
+
+
+def get_champion_details(champion_name: str) -> Dict[str, Any]:
+
+    champ_data = get_cached_champion_data()
+    champ_info = champ_data.get(champion_name)
+
+    if not champ_info:
+        return {
+            'error': f'Champion {champion_name} not found',
+            'available_champions': list(champ_data.keys())[:10]  # Sample
+        }
+
+    return {
+        'name': champ_info.get('name'),
+        'title': champ_info.get('title'),
+        'tags': champ_info.get('tags', []),  # e.g., ['Fighter', 'Tank']
+        'stats': champ_info.get('info', {}),  # attack, defense, magic, difficulty
+        'blurb': champ_info.get('blurb'),  # Short description
+        'partype': champ_info.get('partype'),  # Mana, Energy, etc.
+    }
+
+
+def get_matchup_analysis(
+    your_champion: str,
+    enemy_champions: List[str]
+) -> Dict[str, Any]:
+    champ_data = get_cached_champion_data()
+
+    your_champ_info = champ_data.get(your_champion)
+    if not your_champ_info:
+        return {'error': f'Champion {your_champion} not found'}
+
+    your_tags = set(your_champ_info.get('tags', []))
+    your_stats = your_champ_info.get('info', {})
+
+    enemy_analysis = []
+    tag_threats = {}
+
+    for enemy in enemy_champions:
+        enemy_info = champ_data.get(enemy)
+        if not enemy_info:
+            continue
+
+        enemy_tags = set(enemy_info.get('tags', []))
+        enemy_stats = enemy_info.get('info', {})
+
+        # Track enemy tag composition
+        for tag in enemy_tags:
+            tag_threats[tag] = tag_threats.get(tag, 0) + 1
+
+        enemy_analysis.append({
+            'name': enemy,
+            'tags': list(enemy_tags),
+            'stats': enemy_stats,
+            'common_tags': list(your_tags & enemy_tags)
+        })
+
+    # Strategic recommendations based on tags
+    recommendations = []
+    if tag_threats.get('Tank', 0) >= 2:
+        recommendations.append(
+            'Enemy has multiple tanks - consider anti-tank items like '
+            'Lord Dominik\'s Regards (3036) or Liandry\'s Torment (6653)'
+        )
+    if tag_threats.get('Assassin', 0) >= 1:
+        recommendations.append(
+            'Enemy has assassins - consider defensive items like '
+            'Guardian Angel (3026) or Zhonya\'s Hourglass (3157)'
+        )
+    if tag_threats.get('Mage', 0) >= 2:
+        recommendations.append('Enemy has multiple mages - build magic resist early')
+
+    return {
+        'your_champion': {
+            'name': your_champion,
+            'tags': list(your_tags),
+            'stats': your_stats
+        },
+        'enemy_composition': enemy_analysis,
+        'enemy_tag_counts': tag_threats,
+        'recommendations': recommendations
+    }
