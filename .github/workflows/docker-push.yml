@@ -33,11 +33,6 @@ jobs:
         working-directory: ./client
         run: pnpm test
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
       - name: Install backend dependencies
         working-directory: ./api
         run: |
