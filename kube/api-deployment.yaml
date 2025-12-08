@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: api
-        image: jadedrain/ai-agent-api:latest
+        image: jadedrain/ai-agent-backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
         env:
